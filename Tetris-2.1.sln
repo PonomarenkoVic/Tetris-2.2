@@ -1,0 +1,46 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.21005.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TetrisLogic", "TetrisLogic\TetrisLogic.csproj", "{2FD2745A-48FA-463A-96B2-A486D8CE4E03}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TetrisWPF", "TetrisWPF\TetrisWPF.csproj", "{08B137F6-545C-4D6E-A5B0-9C783538F3B2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ViewModel", "ViewModel\ViewModel.csproj", "{AEFDC924-2A6B-4E12-9D54-8CE1962D45E7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TetrisInterfaces", "TetrisInterfaces\TetrisInterfaces.csproj", "{3D612890-F11A-4E29-A8CB-C1599DB78F6C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TetrisForm", "TetrisForm\TetrisForm.csproj", "{03E64577-2ADF-4FCF-A868-E9264D6530E0}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2FD2745A-48FA-463A-96B2-A486D8CE4E03}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2FD2745A-48FA-463A-96B2-A486D8CE4E03}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2FD2745A-48FA-463A-96B2-A486D8CE4E03}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2FD2745A-48FA-463A-96B2-A486D8CE4E03}.Release|Any CPU.Build.0 = Release|Any CPU
+		{08B137F6-545C-4D6E-A5B0-9C783538F3B2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{08B137F6-545C-4D6E-A5B0-9C783538F3B2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{08B137F6-545C-4D6E-A5B0-9C783538F3B2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{08B137F6-545C-4D6E-A5B0-9C783538F3B2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AEFDC924-2A6B-4E12-9D54-8CE1962D45E7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AEFDC924-2A6B-4E12-9D54-8CE1962D45E7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AEFDC924-2A6B-4E12-9D54-8CE1962D45E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AEFDC924-2A6B-4E12-9D54-8CE1962D45E7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3D612890-F11A-4E29-A8CB-C1599DB78F6C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3D612890-F11A-4E29-A8CB-C1599DB78F6C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3D612890-F11A-4E29-A8CB-C1599DB78F6C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3D612890-F11A-4E29-A8CB-C1599DB78F6C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{03E64577-2ADF-4FCF-A868-E9264D6530E0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{03E64577-2ADF-4FCF-A868-E9264D6530E0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{03E64577-2ADF-4FCF-A868-E9264D6530E0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{03E64577-2ADF-4FCF-A868-E9264D6530E0}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

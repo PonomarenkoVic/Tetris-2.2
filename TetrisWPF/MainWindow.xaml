@@ -1,0 +1,85 @@
+﻿<Window x:Class="TetrisWPF.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"  
+
+        Title="Тетрис 1.0" Height="603" Width="450" VerticalAlignment="Center" WindowStartupLocation="CenterScreen" KeyDown="Window_KeyDown" MinHeight="600" MinWidth="450" ResizeMode="CanMinimize">
+
+    <Window.Resources>
+
+        <!-- Background -->
+        <RadialGradientBrush x:Key="BackgroundBoard" Center="0.5,0.5" RadiusX="1" RadiusY="1">
+            <GradientStop Color="#FAFAFAFA" Offset="0"/>
+            <GradientStop Color="#B2171F6E" Offset="0.5"/>
+            <GradientStop Color="#000000" Offset="1"/>
+        </RadialGradientBrush>
+    </Window.Resources>
+
+    <Grid Margin="0,0,3.2,0.4">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="80"></ColumnDefinition>
+            <ColumnDefinition Width="80" />
+
+        </Grid.ColumnDefinitions>
+
+        <!-- Menu -->
+        <Menu Name="Game" Grid.Row="0" Grid.ColumnSpan="3"  VerticalAlignment="Top" HorizontalAlignment="Stretch">
+            <MenuItem Header="Game" IsEnabled="True" Name="MenuGames">
+                <MenuItem Header="Start game" x:Name="StartGame" Click="StartGame_OnClick"/>
+                <MenuItem Header="Stop game"  x:Name="StopGame" Click="StopGame_Click" IsEnabled="False"/>
+                <Separator />
+                <MenuItem IsChecked="False"  x:Name="PauseGame" Header="Pause" Click="PauseGame_Click" IsEnabled="False"/>
+            </MenuItem>
+            <MenuItem Name="Information" Header="Information" Click="Information_Click"/>
+        </Menu>
+
+
+        <Label FontSize="15" Grid.Row="1" Grid.Column="0" Margin="10,0,0,0">Game board</Label>
+        <!-- Background -->
+        <Canvas  x:Name="GameBoard"  Background="{ StaticResource BackgroundBoard }" Margin="10,0,0,10" Grid.Row ="2" Grid.Column="0" Grid.RowSpan="2" Width="250" Height="500" HorizontalAlignment="Stretch" VerticalAlignment="Top">
+            <Grid x:Name="RectPause"  Visibility ="Hidden" Background="Black"  Opacity="0.75" Height="90" Width="200" Canvas.Left="26" Canvas.Top="193">
+                <Grid.Triggers>
+                    <EventTrigger RoutedEvent="Grid.Loaded">
+                        <BeginStoryboard>
+                            <Storyboard>
+                                <DoubleAnimation
+                                        Storyboard.TargetName="RectPause" 
+                                        Storyboard.TargetProperty="Opacity"
+                                        From="0.7" To="0.9" Duration="0:0:0.5" 
+                                        AutoReverse="True" RepeatBehavior="Forever" />
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </EventTrigger>
+                </Grid.Triggers>
+
+                <Label VerticalAlignment="Center" HorizontalAlignment="Center"  FontSize="30" FontWeight="Bold" Foreground="White" Name="PauseAnimation">Pause</Label>
+            </Grid>
+        </Canvas>
+
+        <!-- Next piece -->
+
+        <Label FontSize="16" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2"  HorizontalAlignment="Center">Next figure</Label>
+        <Canvas x:Name="NextFigureBoard" Background="{ StaticResource BackgroundBoard }"  Margin="0,0,0,10" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2"  Width="100" Height="100" HorizontalAlignment="Center" VerticalAlignment="Top">
+        </Canvas>
+
+        <StackPanel Grid.Row="3" Grid.Column="1">
+            <Label FontSize="15" Margin="10" HorizontalAlignment="Right">Level:</Label>
+            <Label FontSize="15" Margin="10" HorizontalAlignment="Right">Line:</Label>
+            <Label FontSize="15" Margin="10" HorizontalAlignment="Right">Score:</Label>
+        </StackPanel>
+        <StackPanel Grid.Row="3" Grid.Column="2">
+            <Label x:Name="ScoreText" FontSize="15" Margin="10" HorizontalAlignment="Left" Content="{Binding Path=Level, Mode=OneWay}"></Label>
+            <Label x:Name="ScoreLine" FontSize="15" Margin="10" HorizontalAlignment="Left" Content="{Binding Path=BurnedLine, Mode=OneWay}"></Label>
+            <Label x:Name="LevelLine" FontSize="15" Margin="10" HorizontalAlignment="Left" Content="{Binding Path=Score, Mode=OneWay}"></Label>
+
+        </StackPanel>
+
+    </Grid>
+</Window>
