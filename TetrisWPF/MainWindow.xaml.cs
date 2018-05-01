@@ -1,8 +1,11 @@
-﻿using System.Windows;
+﻿using System;
+using System.Timers;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 using TetrisWPF.ViewModel;
 using TetrisInterfaces;
 using TetrisInterfaces.Enum;
@@ -21,9 +24,13 @@ namespace TetrisWPF
              _viewModel = new global::ViewModel.ViewModel(10, 20);
             _viewModel.UpdateBoard += Update;
             _viewModel.GameOverEvent += GameOver;
-            _viewModel.SoundEvent += Sound;           
-            DataContext = _viewModel.GetDataContext();
+            _viewModel.SoundEvent += Sound;
+            _viewModel.VelChangeEvent += VelocityChanged;
+            _timer = new DispatcherTimer();
+            _timer.Tick += Step;
+            DataContext = _viewModel.GetDataContext();          
         }
+
 
 
         const byte StrokeThickness = 1;
@@ -40,8 +47,8 @@ namespace TetrisWPF
         }
 
         private void GameOver()
-        {
-
+        {        
+            _timer.Stop();
             PauseAnimation.Content = "Game Over";
             RectPause.Visibility = Visibility.Visible;
             if (!GameBoard.Children.Contains(RectPause))
@@ -50,8 +57,6 @@ namespace TetrisWPF
                 GameBoard.Children.Add(RectPause);
             }
             SetMenuItemStatus(false);
-
-
         }
 
 
@@ -75,13 +80,16 @@ namespace TetrisWPF
                     dir = Direction.Right;
                     break;
                 case Key.Space:
-                    _viewModel.Turn();
+                    if (_timer.IsEnabled == true)
+                    {
+                        _viewModel.Turn();
+                    }
                     break;
                 case Key.P:
                     PauseGame_Click(null, null);
                     break;
             }
-            if (dir != Direction.Empty)
+            if (dir != Direction.Empty && _timer.IsEnabled == true)
             {
                 _viewModel.Move(dir);
             }           
@@ -89,21 +97,15 @@ namespace TetrisWPF
 
 
         private void StopGame_Click(object sender, RoutedEventArgs e)
-        {
-            _viewModel.Stop();
-            SetMenuItemStatus(false);
+        {                 
+            GameOver();
         }
 
        
 
         private void PauseGame_Click(object sender, RoutedEventArgs e)
-        {
-            _viewModel.Pause();
-            if (RectPause.Visibility == Visibility.Visible)
-            {
-                RectPause.Visibility = Visibility.Hidden;
-            }
-            else
+        {         
+            if (_timer.IsEnabled == true)
             {
                 PauseAnimation.Content = "Pause";
                 RectPause.Visibility = Visibility.Visible;
@@ -112,6 +114,12 @@ namespace TetrisWPF
                     GameBoard.Children.Remove(RectPause);
                     GameBoard.Children.Add(RectPause);
                 }
+                _timer.Stop();
+            }
+            else
+            {
+                RectPause.Visibility = Visibility.Hidden;
+                _timer.Start();
             }
         }
 
@@ -124,9 +132,10 @@ namespace TetrisWPF
 
         private void StartGame_OnClick(object sender, RoutedEventArgs e)
         {
-            _viewModel.Start();
+            _viewModel.Start();          
             SetMenuItemStatus(true);
             RectPause.Visibility = Visibility.Hidden;
+            _timer.Start();
         }
 
 
@@ -140,6 +149,15 @@ namespace TetrisWPF
         #endregion
 
 
+        private void Step(object sender, EventArgs eventArgs)
+        {
+            _viewModel.Step();
+        }
+
+        private void VelocityChanged(object obj, VelocChangedEventArg arg)
+        {
+            _timer.Interval = new TimeSpan(0, 0, 0, 0, (int)(600 / arg.Vel)); 
+        }
 
         #region Showing
 
@@ -207,5 +225,6 @@ namespace TetrisWPF
 
         private static readonly SolidColorBrush BorderColor = new SolidColorBrush(Colors.Black);     
         private readonly global::ViewModel.ViewModel _viewModel;
+        private readonly DispatcherTimer _timer;
     }
 }

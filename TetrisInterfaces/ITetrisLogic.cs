@@ -15,10 +15,10 @@ namespace TetrisInterfaces
         event SoundT SoundEvent;
         event ShowT UpdateEvent;
         event Action GameOverEvent;
-        void Start();
-        void Stop();
-        void Pause();
+        event VelocChange VelocityChangeEvent;
+        void Start();    
         void Move(Direction dir);      
         void Turn();
+        void Step();
     }
 }

@@ -14,13 +14,23 @@ namespace ViewModel
             InitializeCommands();
             _model.UpdateEvent += Update;
             _model.GameOverEvent += GameOver;
-            _model.SoundEvent += Sound;            
+            _model.SoundEvent += Sound;
+            _model.VelocityChangeEvent += VelocityChanged;
+        }
+
+        private void VelocityChanged(object obj, VelocChangedEventArg arg)
+        {
+            if (VelChangeEvent != null)
+            {
+                VelChangeEvent(obj, arg);
+            }
         }
 
 
         public event ShowT UpdateBoard;
         public event SoundT SoundEvent;
         public event Action GameOverEvent;
+        public event VelocChange VelChangeEvent;
 
         public Property GetDataContext()
         {
@@ -82,16 +92,10 @@ namespace ViewModel
             _model.Turn();
         }
 
-        public void Pause()
+        public void Step()
         {
-            _model.Pause();
+            _model.Step();
         }
-
-        public void Stop()
-        {
-            _model.Stop();
-        }
-
 
         private readonly ITetrisLogic _model;
         private readonly Property _property;

@@ -203,7 +203,7 @@
             // GameOverLabel
             // 
             this.GameOverLabel.AutoSize = true;
-            this.GameOverLabel.BackColor = System.Drawing.Color.LightBlue;
+            this.GameOverLabel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(182)))), ((int)(((byte)(192)))), ((int)(((byte)(235)))));
             this.GameOverLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.GameOverLabel.Location = new System.Drawing.Point(69, 260);
             this.GameOverLabel.Name = "GameOverLabel";

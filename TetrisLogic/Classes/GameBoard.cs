@@ -23,20 +23,13 @@ namespace TetrisLogic.Figures
         {
             Width = width;
             Height = height;
-            _field = new BoardPoint[_width, _height];
-            _velocity = Initializer.GetVelocityByLevel(0);          
+            _field = new BoardPoint[_width, _height];      
             _level = 0;
             _burnedLines = 0;
             _score = 0;
-
- 
-            Timer timer = new Timer();
-            
-            _timer = new DispatcherTimer { Interval = new TimeSpan(0, 0, 0, 0, (int)(600 / _velocity))};
-            _timer.Dispatcher.Thread.IsBackground = true;
-            _timer.Dispatcher.Thread.Priority = ThreadPriority.Highest;
-            _timer.Tick += Step;
         }
+
+        
 
 
         #region Properties
@@ -91,7 +84,7 @@ namespace TetrisLogic.Figures
         public event SoundT SoundEvent;
         public event ShowT UpdateEvent;
         public event Action GameOverEvent;
-
+        public event VelocChange VelocityChangeEvent;
 
        
 
@@ -106,38 +99,17 @@ namespace TetrisLogic.Figures
         public void Start()
         {
             Reset();
+            SetVelocity();
             _currentFigure = Initializer.GetFigure(this);
             _currentFigure.DeleteTopFreeLineAndCenter();
             _nextFigure = Initializer.GetFigure(this);
-            _timer.Start();
             Update();
-        }
-
-        public void Stop()
-        {
-            _timer.Stop();
-            GameOver();
-        }
-
-        public void Pause()
-        {
-            if (_timer.IsEnabled)
-            {
-                _timer.Stop();
-            }
-            else
-            {
-                _timer.Start();
-            }
-        }
+        }     
         
         public void Move(Direction dir)
-        {
-            if (_timer.IsEnabled == true)
-            {
+        {          
                 if (dir == Direction.Down)
-                {
-  
+                { 
                     if ( _currentFigure.Move(dir))
                     {
                         Update();
@@ -155,14 +127,15 @@ namespace TetrisLogic.Figures
                         if (!FigureLogic.CheckFreeArea(_currentFigure, Field))
                         {
                             _currentFigure = null;
-                            GameOver();
+                            if (GameOverEvent != null)
+                            {
+                                GameOverEvent();
+                            }
                         }
                         else
                         {
                             Update();
-                        }
-                           
-                        
+                        }                      
                     }
                 }
                 else
@@ -176,9 +149,6 @@ namespace TetrisLogic.Figures
                         Update();
                     }
                 }
-                
-                
-            }
         }   
 
         public void Turn()
@@ -194,18 +164,14 @@ namespace TetrisLogic.Figures
             }
         }
 
-        private void Step(object sender, EventArgs arg)
-        {
-            if (_timer.IsEnabled == true)
-            {
-              Move((Direction.Down));
-            }
+        public void Step()
+        {         
+            Move((Direction.Down)); 
         }
 
 
         #endregion
 
-       
 
         private bool CopyCurrentFigureToField()
         {
@@ -262,12 +228,11 @@ namespace TetrisLogic.Figures
             }
         }
 
-        private void GameOver()
+        private void SetVelocity()
         {
-            _timer.Stop();
-            if (GameOverEvent != null)
+            if (VelocityChangeEvent != null)
             {
-                GameOverEvent();
+                VelocityChangeEvent(this, new VelocChangedEventArg(Initializer.GetVelocityByLevel(_level)));
             }
         }
 
@@ -284,13 +249,14 @@ namespace TetrisLogic.Figures
 
         private void Reset()
         {
-            _velocity = 0;
+
             ClearGameBoard();
             _currentFigure = null;
             _nextFigure = null;
             _level = 0;
             _burnedLines = 0;
             _score = 0;
+            SetVelocity();
         }     
 
         private bool CheckScoreLevelUp()
@@ -301,8 +267,7 @@ namespace TetrisLogic.Figures
         private void LevelUp()
         {
             _level++;
-            _velocity = Initializer.GetVelocityByLevel(_level);
-            _timer.Interval = new TimeSpan(0, 0, 0, 0, (int)(600 / _velocity));
+            SetVelocity();
             ClearGameBoard();  
             Initializer.FillBoardFieldByLevel(_field, _level);           
         }
@@ -346,14 +311,12 @@ namespace TetrisLogic.Figures
 
 
 
-        private readonly DispatcherTimer _timer;
-
+ 
         private Figure _currentFigure;
         private Figure _nextFigure;
         private int _width;
         private int _height;
         private BoardPoint[,] _field;        
-        private float _velocity;
         private int _level;
         private int _burnedLines;
         private int _score;    

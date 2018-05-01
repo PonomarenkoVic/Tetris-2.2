@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
 using System.Windows.Media;
+using System.Windows.Threading;
 using TetrisForm.Properties;
 using TetrisLogic;
 using Brush = System.Drawing.Brush;
@@ -28,7 +29,10 @@ namespace TetrisForm
             _gameBoard = new GameBoard(10, 20);
             _gameBoard.UpdateEvent += Updating;
             _gameBoard.GameOverEvent += GameOver;
-            _gameBoard.SoundEvent += Sound;          
+            _gameBoard.SoundEvent += Sound;
+            _gameBoard.VelocityChangeEvent += VelocityChanged;
+            _timer = new DispatcherTimer();
+            _timer.Tick += Step;
         }
 
         const byte SizePoint = 25;
@@ -58,9 +62,11 @@ namespace TetrisForm
             global::TetrisForm.Sound.Play(arg.Sound);
         }
 
+
         private void GameOver()
         {
             GameOverLabel.Visible = true;
+            _timer.Stop();   
         }
 
         private void Updating(object sender, ShowEventArg arg)
@@ -98,14 +104,18 @@ namespace TetrisForm
               
                     break;
                 case Keys.Space:
-                    _gameBoard.Turn();
+                    if (_timer.IsEnabled)
+                    {
+                        _gameBoard.Turn();
+                    }
+                    
                     break;
                 case Keys.P:
-                    _gameBoard.Pause();
+                    StripMenuPauseItem_Click(null, null);
                     break;               
             }
 
-            if (dir != Direction.Empty)
+            if (dir != Direction.Empty && _timer.IsEnabled)
             {
                 _gameBoard.Move(dir);
             }
@@ -117,17 +127,21 @@ namespace TetrisForm
         {
             GameOverLabel.Visible = false;           
             _gameBoard.Start();
-            StripMenuStartItem.Enabled = false;
-            StripMenuExitItem.Enabled = false;
-            StripMenuInformationItem.Enabled = false;
-            StripMenuPauseItem.Enabled = true;
-            StripMenuStopItem.Enabled = true;
+            SetMenuStatus(true);
+            _timer.Start();
         }
 
 
         private void StripMenuPauseItem_Click(object sender, EventArgs e)
         {
-            _gameBoard.Pause();
+            if (_timer.IsEnabled)
+            {
+                _timer.Stop();
+            }
+            else
+            {
+                _timer.Start();
+            }            
         }
 
         private void StripMenuExitItem_Click(object sender, EventArgs e)
@@ -137,12 +151,18 @@ namespace TetrisForm
 
         private void StripMenuStopItem_Click(object sender, EventArgs e)
         {
-            _gameBoard.Stop();
-            StripMenuStartItem.Enabled = true;
-            StripMenuExitItem.Enabled = true;
-            StripMenuInformationItem.Enabled = true;
-            StripMenuPauseItem.Enabled = false;
-            StripMenuStopItem.Enabled = false;
+           _timer.Stop();
+            GameOver();
+            SetMenuStatus(false);
+        }
+
+        private void SetMenuStatus(bool status)
+        {
+            StripMenuStartItem.Enabled = !status;
+            StripMenuExitItem.Enabled = !status;
+            StripMenuInformationItem.Enabled = !status;
+            StripMenuPauseItem.Enabled = status;
+            StripMenuStopItem.Enabled = status;
         }
 
         private void StripMenuInformationItem_Click(object sender, EventArgs e)
@@ -153,6 +173,15 @@ namespace TetrisForm
         #endregion
 
 
+        private void Step(object sender, EventArgs eventArgs)
+        {
+            _gameBoard.Step();
+        }
+
+        private void VelocityChanged(object obj, VelocChangedEventArg arg)
+        {
+            _timer.Interval = new TimeSpan(0, 0, 0, 0, (int)(600 / arg.Vel));
+        }
 
         #region Showing
 
@@ -205,7 +234,7 @@ namespace TetrisForm
         Graphics _graphicGameBoard;
         Graphics _graphicNextFigure;
         private readonly GameBoard _gameBoard;
+        private readonly DispatcherTimer _timer;
 
-       
     }
 }
