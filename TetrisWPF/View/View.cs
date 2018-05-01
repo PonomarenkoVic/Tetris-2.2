@@ -1,45 +1,34 @@
 ﻿using System;
 using System.Windows.Media;
+using TetrisInterfaces;
 
 namespace TetrisWPF.ViewModel
 {
     internal static class View
     {
-        public static SolidColorBrush GetColor(byte source)
+        public static SolidColorBrush GetColor(TColor source)
         {
             SolidColorBrush color;
             switch (source)
             {
-                case 0:
-                    color = new SolidColorBrush(Colors.Brown);
-                    break;
-                case 1:
-                    color = new SolidColorBrush(Colors.Red);
-                    break;
-                case 2:
-                    color = new SolidColorBrush(Colors.Blue);
-                    break;
-                case 3:
+                case TColor.BlueViolet:
                     color = new SolidColorBrush(Colors.BlueViolet);
                     break;
-                case 4:
+                case TColor.Brown:
+                    color = new SolidColorBrush(Colors.Brown);
+                    break;
+                case TColor.Green:
                     color = new SolidColorBrush(Colors.Green);
                     break;
-                case 5:
-                    color = new SolidColorBrush(Colors.DarkMagenta);
+                case TColor.Orange:
+                    color = new SolidColorBrush(Colors.DarkOrange);
                     break;
-                case 6:
-                    color = new SolidColorBrush(Colors.LightSeaGreen);
+                case TColor.Pink:
+                    color = new SolidColorBrush(Colors.DeepPink);
                     break;
-                case 7:
-                    color = new SolidColorBrush(Colors.Lime);
-                    break;
-                case 8:
-                    color = new SolidColorBrush(Colors.Crimson);
-                    break;
-                case 9:
-                    color = new SolidColorBrush(Colors.SpringGreen);
-                    break;
+                case TColor.Red:
+                    color = new SolidColorBrush(Colors.Red);
+                    break;               
               default:
                   color = new SolidColorBrush(Colors.Black);
                   break;

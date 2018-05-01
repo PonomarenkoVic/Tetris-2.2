@@ -1,12 +1,16 @@
-﻿
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Media;
+using System.Text;
+using System.Threading.Tasks;
 using TetrisInterfaces.Enum;
 
-
-namespace TetrisForm
+namespace TetrisConsole
 {
-    internal class Sound
-    {     
+    public static class Sound
+    {
         public static void Play(TSound sound)
         {
             string path = null;
@@ -22,10 +26,13 @@ namespace TetrisForm
                     path = "turn.wav";
                     break;
             }
-            Player.SoundLocation = path;
-            Player.Play();
+
+            if (File.Exists(path))
+            {
+                Player.SoundLocation = path;
+                Player.Play();
+            }           
         }
         private static readonly SoundPlayer Player = new SoundPlayer();
-
     }
 }

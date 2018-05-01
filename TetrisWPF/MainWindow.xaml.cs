@@ -5,7 +5,7 @@ using System.Windows.Media;
 using System.Windows.Shapes;
 using TetrisWPF.ViewModel;
 using TetrisInterfaces;
-
+using TetrisInterfaces.Enum;
 
 
 namespace TetrisWPF
@@ -21,9 +21,7 @@ namespace TetrisWPF
              _viewModel = new global::ViewModel.ViewModel(10, 20);
             _viewModel.UpdateBoard += Update;
             _viewModel.GameOverEvent += GameOver;
-            _viewModel.SoundBurnLineEvent += SoundBurningLine;
-            _viewModel.SoundStepEvent += SoundStep;
-            _viewModel.SoundTurningEvent += SoundTurning;
+            _viewModel.SoundEvent += Sound;           
             DataContext = _viewModel.GetDataContext();
         }
 
@@ -36,19 +34,9 @@ namespace TetrisWPF
 
         #region Methods by subscription
 
-        private void SoundTurning()
+        private void Sound(object sender, SoundEventArg arg)
         {
-            Sound.PlayTurningSound();
-        }
-
-        private void SoundStep()
-        {
-            Sound.PlayStepSound();
-        }
-
-        private void SoundBurningLine()
-        {
-            Sound.PlayBurningSound();
+            TetrisWPF.Sound.Play(arg.Sound);
         }
 
         private void GameOver()
@@ -58,14 +46,14 @@ namespace TetrisWPF
             RectPause.Visibility = Visibility.Visible;
             if (!GameBoard.Children.Contains(RectPause))
             {
+                GameBoard.Children.Remove(RectPause);
                 GameBoard.Children.Add(RectPause);
             }
+            SetMenuItemStatus(false);
+
+
         }
 
-        private void Update()
-        {
-            PaintGameBoard(_viewModel.GetData());
-        }
 
         #endregion
        
@@ -74,39 +62,43 @@ namespace TetrisWPF
         #region  Control
         private void Window_KeyDown(object sender, KeyEventArgs e)
         {
+            Direction dir = Direction.Empty;
             switch (e.Key)
             {
                 case Key.Down:
-                    _viewModel.DownClick();
+                    dir = Direction.Down;
                     break;
                 case Key.Left:
-                    _viewModel.LeftClick();
+                    dir = Direction.Left;
                     break;
                 case Key.Right:
-                    _viewModel.RightClick();
+                    dir = Direction.Right;
                     break;
                 case Key.Space:
-                    _viewModel.SpaceClick();
+                    _viewModel.Turn();
                     break;
                 case Key.P:
                     PauseGame_Click(null, null);
                     break;
             }
+            if (dir != Direction.Empty)
+            {
+                _viewModel.Move(dir);
+            }           
         }
 
 
         private void StopGame_Click(object sender, RoutedEventArgs e)
         {
-            _viewModel.StopClick();
-            StopGame.IsEnabled = false;
-            StartGame.IsEnabled = true;
-            PauseGame.IsEnabled = false;
-            Information.IsEnabled = true;
+            _viewModel.Stop();
+            SetMenuItemStatus(false);
         }
+
+       
 
         private void PauseGame_Click(object sender, RoutedEventArgs e)
         {
-            _viewModel.PClick();
+            _viewModel.Pause();
             if (RectPause.Visibility == Visibility.Visible)
             {
                 RectPause.Visibility = Visibility.Hidden;
@@ -117,6 +109,7 @@ namespace TetrisWPF
                 RectPause.Visibility = Visibility.Visible;
                 if (!GameBoard.Children.Contains(RectPause))
                 {
+                    GameBoard.Children.Remove(RectPause);
                     GameBoard.Children.Add(RectPause);
                 }
             }
@@ -132,14 +125,18 @@ namespace TetrisWPF
         private void StartGame_OnClick(object sender, RoutedEventArgs e)
         {
             _viewModel.Start();
-            StopGame.IsEnabled = true;
-            StartGame.IsEnabled = false;
-            PauseGame.IsEnabled = true;
-            Information.IsEnabled = false;
-
+            SetMenuItemStatus(true);
             RectPause.Visibility = Visibility.Hidden;
         }
 
+
+        private void SetMenuItemStatus(bool status)
+        {
+            StopGame.IsEnabled = status;
+            StartGame.IsEnabled = !status;
+            PauseGame.IsEnabled = status;
+            Information.IsEnabled = !status;
+        }
         #endregion
 
 
@@ -147,36 +144,45 @@ namespace TetrisWPF
         #region Showing
 
 
-        void PaintGameBoard(IShowable board)
+        private void Update(object sender, ShowEventArg arg)
         {
-
-            int boardWidth = board.Field[0].GetLength(0);
-            int boardHight = board.Field[0].GetLength(1);
-            GameBoard.Children.Clear();
-            for (byte i = 0; i < boardHight; i++)
+            if (arg != null)
             {
-                for (byte j = 0; j < boardWidth; j++)
+                if (arg.Board != null)
                 {
-                    if (board.Field[0][j, i])
+                    int boardWidth = arg.Board.GetLength(0);
+                    int boardHight = arg.Board.GetLength(1);
+                    GameBoard.Children.Clear();
+                    for (byte i = 0; i < boardHight; i++)
                     {
-                        SolidColorBrush color = View.GetColor(board.ColorField[j, i]);
-                        GameBoard.Children.Add(CreateRectangle(color, j, i));
+                        for (byte j = 0; j < boardWidth; j++)
+                        {
+                            if (arg.Board[j, i] != null)
+                            {
+                                SolidColorBrush color = View.GetColor(arg.Board[j, i].Col);
+                                GameBoard.Children.Add(CreateRectangle(color, j, i));
 
+                            }
+                        }
                     }
                 }
-            }
 
-            NextFigureBoard.Children.Clear();
-            for (byte i = 0; i < WidthHeightNFigureBoard; i++)
-            {
-                for (byte j = 0; j < WidthHeightNFigureBoard; j++)
+                if (arg.NextFigure != null)
                 {
-                    if (board.Field[1][j, i])
+                    NextFigureBoard.Children.Clear();
+                    for (byte i = 0; i < arg.NextFigure.GetLength(1); i++)
                     {
-                        SolidColorBrush color = View.GetColor(board.ColorNextFigure);
-                        NextFigureBoard.Children.Add(CreateRectangle(color, j, i));
+                        for (byte j = 0; j < arg.NextFigure.GetLength(0); j++)
+                        {
+                            if (arg.NextFigure[j, i] != null)
+                            {
+                                SolidColorBrush color = View.GetColor(arg.NextFigure[j, i].Col);
+                                NextFigureBoard.Children.Add(CreateRectangle(color, j, i));
+                            }
+                        }
                     }
                 }
+                
             }
         }
 
@@ -198,8 +204,6 @@ namespace TetrisWPF
         }
 
         #endregion
-
-
 
         private static readonly SolidColorBrush BorderColor = new SolidColorBrush(Colors.Black);     
         private readonly global::ViewModel.ViewModel _viewModel;

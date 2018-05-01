@@ -3,24 +3,22 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TetrisInterfaces.Enum;
 
 namespace TetrisInterfaces
 {
+    public delegate void SoundT(object obj, SoundEventArg arg);
+    public delegate void ShowT(object obj, ShowEventArg arg);
+    public delegate void VelocChange(object obj, VelocChangedEventArg arg);
     public interface ITetrisLogic
     {
-
+        event SoundT SoundEvent;
+        event ShowT UpdateEvent;
         event Action GameOverEvent;
-        event Action UpdateEvent;
-        event Action SoundBurnLineEvent;
-        event Action SoundStepEvent;
-        event Action SoundTurningEvent;
         void Start();
         void Stop();
         void Pause();
-        void StepLeft();
-        void StepRight();
-        void NextStep();
+        void Move(Direction dir);      
         void Turn();
-        IShowable GetJoinedData();
     }
 }

@@ -1,31 +1,29 @@
 ﻿using System;
 using System.Media;
+using TetrisInterfaces.Enum;
 
 
 namespace TetrisWPF
 {
     internal static class Sound
     {
-        
-        public static void PlayStepSound()
+        public static void Play(TSound sound)
         {
-            Player.SoundLocation = "move.wav";
+            switch (sound)
+            {
+                case TSound.Burning:
+                    Player.SoundLocation = "burn.wav";
+                    break;
+                case TSound.Stepping:
+                    Player.SoundLocation = "move.wav";
+                    break;
+                case TSound.Turning:
+                    Player.SoundLocation = "turn.wav";
+                    break;
+            }
+            
             Player.Play();
-        }
-
-        public static void PlayTurningSound()
-        {
-            Player.SoundLocation = "turn.wav";
-            Player.Play();
-        }
-
-        public static void PlayBurningSound()
-        {
-            Player.SoundLocation = "burn.wav";
-            Player.Play();
-        }
-
-  
+        } 
         private static readonly SoundPlayer Player = new SoundPlayer();
     }
 }

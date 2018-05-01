@@ -1,6 +1,7 @@
 ﻿using System;
 using TetrisInterfaces;
-using TetrisLogic;
+using TetrisInterfaces.Enum;
+using TetrisLogic.Figures;
 
 namespace ViewModel
 {
@@ -13,32 +14,25 @@ namespace ViewModel
             InitializeCommands();
             _model.UpdateEvent += Update;
             _model.GameOverEvent += GameOver;
-            _model.SoundBurnLineEvent += SoundBurningLine;
-            _model.SoundStepEvent += SoundStep;
-            _model.SoundTurningEvent += SoundTurning;
+            _model.SoundEvent += Sound;            
         }
 
-        private void SoundTurning()
+
+        public event ShowT UpdateBoard;
+        public event SoundT SoundEvent;
+        public event Action GameOverEvent;
+
+        public Property GetDataContext()
         {
-            if (SoundTurningEvent != null)
-            {
-                SoundTurningEvent();
-            }
+            return _property;
         }
 
-        private void SoundStep()
-        {
-            if (SoundStepEvent != null)
-            {
-                SoundStepEvent();
-            }
-        }
 
-        private void SoundBurningLine()
+        private void Sound(object sender, SoundEventArg arg)
         {
-            if (SoundBurnLineEvent != null)
+            if (SoundEvent != null)
             {
-                SoundBurnLineEvent();
+                SoundEvent(sender, arg);
             }
         }
 
@@ -64,69 +58,43 @@ namespace ViewModel
         {
             _model.Start();
         }
-
-        public event Action UpdateBoard;
-        public event Action GameOverEvent;
-        public event Action SoundBurnLineEvent;
-        public event Action SoundStepEvent;
-        public event Action SoundTurningEvent;
-
-        public IShowable GetData()
-        {
-            return _model.GetJoinedData();
-        }
-        public Property GetDataContext()
-        {
-            return _property;
-        }
-
-        private void Update()
-        {
-            IShowable data = _model.GetJoinedData();
-            _property.Level = data.Level + 1;
-            _property.BurnedLine = data.BurnedLines;
-            _property.Score = data.Score;
+      
+        private void Update(object sender, ShowEventArg arg)
+        {           
+            _property.Level = arg.Level + 1;
+            _property.BurnedLine = arg.BurnedLine;
+            _property.Score = arg.Score;
             if (UpdateBoard != null)
             {
-                UpdateBoard(); 
+                UpdateBoard(sender, arg); 
             }
            
+        }   
+
+        public void Move(Direction dir)
+        {
+            _model.Move(dir);
         }
 
+
+        public void Turn()
+        {
+            _model.Turn();
+        }
+
+        public void Pause()
+        {
+            _model.Pause();
+        }
+
+        public void Stop()
+        {
+            _model.Stop();
+        }
 
 
         private readonly ITetrisLogic _model;
         private readonly Property _property;
         private readonly Command _command;
-
-        public void DownClick()
-        {
-            _model.NextStep();
-        }
-
-        public void LeftClick()
-        {
-           _model.StepLeft();
-        }
-
-        public void RightClick()
-        {
-            _model.StepRight();
-        }
-
-        public void SpaceClick()
-        {
-            _model.Turn();
-        }
-
-        public void PClick()
-        {
-            _model.Pause();
-        }
-
-        public void StopClick()
-        {
-            _model.Stop();
-        }
     }
 }

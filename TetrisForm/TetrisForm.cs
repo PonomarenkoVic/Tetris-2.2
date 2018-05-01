@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Windows.Forms;
+using System.Windows.Media;
 using TetrisForm.Properties;
 using TetrisLogic;
 using Brush = System.Drawing.Brush;
@@ -8,6 +10,10 @@ using Brushes = System.Drawing.Brushes;
 using Color = System.Drawing.Color;
 using KeyEventArgs = System.Windows.Forms.KeyEventArgs;
 using TetrisInterfaces;
+using TetrisInterfaces.Enum;
+using TetrisLogic.Figures;
+using LinearGradientBrush = System.Drawing.Drawing2D.LinearGradientBrush;
+
 namespace TetrisForm
 {
     public partial class TetrisForm : Form
@@ -16,48 +22,40 @@ namespace TetrisForm
         public TetrisForm()
         {
             InitializeComponent();
-            GBoard.BackColor = Color.LightBlue;
-            NFigureBoard.BackColor = Color.LightBlue;
+            //GBoard.BackColor = Color.LightBlue;
+            //NFigureBoard.BackColor = Color.LightBlue;
  
             _gameBoard = new GameBoard(10, 20);
             _gameBoard.UpdateEvent += Updating;
             _gameBoard.GameOverEvent += GameOver;
-            _gameBoard.SoundBurnLineEvent += SoundBurningLine;
-            _gameBoard.SoundStepEvent += SoundStep;
-            _gameBoard.SoundTurningEvent += SoundTurning;
-
+            _gameBoard.SoundEvent += Sound;          
         }
-
 
         const byte SizePoint = 25;
         const byte WidthHeightNFigureBoard = 4;
-
 
 
         private void TetrisForm_Load(object sender, EventArgs e)
         {
             StripMenuStopItem.Enabled = false;
             StripMenuPauseItem.Enabled = false;
+            _graphicGameBoard = GBoard.CreateGraphics();
+            _graphicNextFigure = NFigureBoard.CreateGraphics();
+            //LinearGradientBrush grBrush = new LinearGradientBrush(GBoard.DisplayRectangle, Color.Cyan, Color.Beige, 0.5f);
+            ////grBrush.GradientStops.Add(new GradientStop(){Color = System.Windows.Media.Color.FromArgb(250, 250, 250, 250), Offset = 0});
+            ////grBrush.GradientStops.Add(new GradientStop() { Color = System.Windows.Media.Color.FromArgb(178, 23, 31, 110), Offset = 0.5 });
+            ////grBrush.GradientStops.Add(new GradientStop() { Color = System.Windows.Media.Color.FromArgb(0, 0, 0, 0), Offset = 1});
+            //_graphicGameBoard.FillRectangle(grBrush, GBoard.DisplayRectangle);
         }
-
 
 
 
         #region Methods by subscription
 
-        private void SoundTurning()
-        {
-            Sound.PlayTurningSound();
-        }
 
-        private void SoundStep()
+        private void Sound(object sender, SoundEventArg arg)
         {
-            Sound.PlayStepSound();
-        }
-
-        private void SoundBurningLine()
-        {
-            Sound.PlayBurningSound();
+            global::TetrisForm.Sound.Play(arg.Sound);
         }
 
         private void GameOver()
@@ -65,15 +63,17 @@ namespace TetrisForm
             GameOverLabel.Visible = true;
         }
 
-        private void Updating()
+        private void Updating(object sender, ShowEventArg arg)
         {
-            PaintGameBoard(_gameBoard.GetData);
+            Level.Text = (arg.Level + 1).ToString();
+            Score.Text = arg.Score.ToString();
+            BurnedLine.Text = arg.BurnedLine.ToString();
+            ShowGameBoard(arg);
+            ShowNextFigure(arg);
         }
+      
 
         #endregion
-
-
-
 
 
 
@@ -83,34 +83,39 @@ namespace TetrisForm
 
         private void TetrisForm_KeyDown(object sender, KeyEventArgs e)
         {
+            Direction dir = Direction.Empty;
             switch (e.KeyCode)
             {
                 case Keys.Left:
-                    _gameBoard.StepLeft();
+                    dir = Direction.Left;   
                     break;
                 case Keys.Right:
-                    _gameBoard.StepRight();
+                    dir = Direction.Right;
+                   
                     break;
                 case Keys.Down:
-                    _gameBoard.NextStep();
+                    dir = Direction.Down;
+              
                     break;
                 case Keys.Space:
                     _gameBoard.Turn();
                     break;
                 case Keys.P:
                     _gameBoard.Pause();
-                    break;
+                    break;               
             }
+
+            if (dir != Direction.Empty)
+            {
+                _gameBoard.Move(dir);
+            }
+            
         }
-
-
 
 
         private void StripMenuStartItem_Click(object sender, EventArgs e)
         {
-            GameOverLabel.Visible = false;
-            _graphicGameBoard = GBoard.CreateGraphics();
-            _graphicNextFigure = NFigureBoard.CreateGraphics();
+            GameOverLabel.Visible = false;           
             _gameBoard.Start();
             StripMenuStartItem.Enabled = false;
             StripMenuExitItem.Enabled = false;
@@ -139,55 +144,60 @@ namespace TetrisForm
             StripMenuPauseItem.Enabled = false;
             StripMenuStopItem.Enabled = false;
         }
+
+        private void StripMenuInformationItem_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show(Resources.TetrisForm_StripMenuInformationItem_Click_, "Control");
+        }
+
         #endregion
-      
 
 
 
         #region Showing
 
-
-        void PaintGameBoard(IShowable board)
+        private void ShowNextFigure(ShowEventArg arg)
         {
-            Level.Text = (board.Level + 1).ToString();
-            Score.Text = board.Score.ToString();
-            BurnedLine.Text = board.BurnedLines.ToString();
-            int boardWidth = board.Field[0].GetLength(0);
-            int boardHight = board.Field[0].GetLength(1);
-
-            for (byte i = 0; i < boardHight; i++)
+            for (byte i = 0; i < arg.NextFigure.GetLength(1); i++)
             {
-                for (byte j = 0; j < boardWidth; j++)
+                for (byte j = 0; j < arg.NextFigure.GetLength(0); j++)
                 {
-                    if (board.Field[0][j, i])
+                    if (arg.NextFigure[j, i] != null)
                     {
-                       _graphicGameBoard.FillEllipse(View.GetColor(board.ColorField[j, i]), new Rectangle(j * SizePoint, i * SizePoint, SizePoint, SizePoint));
+                        Brush colorN = View.GetColor(arg.NextFigure[j, i].Col);
+                        _graphicNextFigure.FillEllipse(colorN,
+                            new Rectangle(j * SizePoint, i * SizePoint, SizePoint, SizePoint));
                     }
                     else
                     {
-                        _graphicGameBoard.FillEllipse(Brushes.LightBlue, new Rectangle(j * SizePoint, i * SizePoint, SizePoint, SizePoint));
-                    }
-                }
-            }
-
-
-            Brush colorN = View.GetColor(board.ColorNextFigure);
-            for (byte i = 0; i < WidthHeightNFigureBoard; i++)
-            {
-                for (byte j = 0; j < WidthHeightNFigureBoard; j++)
-                {
-                    if (board.Field[1][j, i])
-                    {
-                        _graphicNextFigure.FillEllipse(colorN, new Rectangle(j * SizePoint, i * SizePoint, SizePoint, SizePoint));
-                    }
-                    else
-                    {
-                        _graphicNextFigure.FillEllipse(Brushes.LightBlue, new Rectangle(j * SizePoint, i * SizePoint, SizePoint, SizePoint));
+                        _graphicNextFigure.FillEllipse(new SolidBrush(Color.FromArgb(182,192,235)), 
+                            new Rectangle(j * SizePoint, i * SizePoint, SizePoint, SizePoint));
                     }
                 }
             }
         }
 
+        private void ShowGameBoard(ShowEventArg arg)
+        {
+            int boardWidth = arg.Board.GetLength(0);
+            int boardHight = arg.Board.GetLength(1);
+            for (byte i = 0; i < boardHight; i++)
+            {
+                for (byte j = 0; j < boardWidth; j++)
+                {
+                    if (arg.Board[j, i] != null)
+                    {
+                        _graphicGameBoard.FillEllipse(View.GetColor(arg.Board[j, i].Col),
+                            new Rectangle(j * SizePoint, i * SizePoint, SizePoint, SizePoint));
+                    }
+                    else
+                    {
+                        _graphicGameBoard.FillEllipse(new SolidBrush(Color.FromArgb(182, 192, 235)),
+                            new Rectangle(j * SizePoint, i * SizePoint, SizePoint, SizePoint));
+                    }
+                }
+            }
+        }
 
         #endregion
 
@@ -196,9 +206,6 @@ namespace TetrisForm
         Graphics _graphicNextFigure;
         private readonly GameBoard _gameBoard;
 
-        private void StripMenuInformationItem_Click(object sender, EventArgs e)
-        {
-            MessageBox.Show(Resources.TetrisForm_StripMenuInformationItem_Click_, "Control");
-        }
+       
     }
 }

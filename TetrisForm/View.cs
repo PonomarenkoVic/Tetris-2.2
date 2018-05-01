@@ -1,46 +1,35 @@
 ﻿
 using System.Drawing;
+using TetrisInterfaces;
 
 
 namespace TetrisForm
 {
     public class View
     {
-        public static Brush GetColor(byte source)
+        public static Brush GetColor(TColor source)
         {
             Brush color;
             switch (source)
             {
-                case 0:
+                case TColor.Brown:
                     color = Brushes.Brown;
                     break;
-                case 1:
+                case TColor.Red:
                     color = Brushes.Red;
                     break;
-                case 2:
-                    color =  Brushes.Blue;
-                    break;
-                case 3:
+                case TColor.BlueViolet:
                     color =  Brushes.BlueViolet;
                     break;
-                case 4:
+                case TColor.Green:
                     color = Brushes.Green;
                     break;
-                case 5:
-                    color = Brushes.DarkMagenta;
+                case TColor.Orange:
+                    color = Brushes.DarkOrange;
                     break;
-                case 6:
-                    color =  Brushes.LightSeaGreen;
-                    break;
-                case 7:
-                    color = Brushes.Lime;
-                    break;
-                case 8:
-                    color = Brushes.Crimson;
-                    break;
-                case 9:
-                    color =  Brushes.SpringGreen;
-                    break;
+                case TColor.Pink:
+                    color =  Brushes.DeepPink;
+                    break;               
                 default:
                     color = Brushes.Black;
                     break;

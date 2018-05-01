@@ -39,10 +39,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="IShowable.cs" />
+    <Compile Include="BoardPoint.cs" />
+    <Compile Include="Enum\Direction.cs" />
+    <Compile Include="Enum\TSound.cs" />
     <Compile Include="ITetrisLogic.cs" />
+    <Compile Include="ShowEventArg.cs" />
+    <Compile Include="SoundEventArg.cs" />
+    <Compile Include="Enum\TColor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="VelocChangedEventArg.cs" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

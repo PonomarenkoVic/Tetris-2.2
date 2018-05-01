@@ -64,7 +64,7 @@ namespace TetrisForm.Properties {
         ///   Looks up a localized string similar to Left - &lt;
         ///Right - &gt;
         ///Down - v
-        ///Turn - Space
+        ///TurnFigure - Space
         ///Pause - P.
         /// </summary>
         internal static string TetrisForm_StripMenuInformationItem_Click_ {

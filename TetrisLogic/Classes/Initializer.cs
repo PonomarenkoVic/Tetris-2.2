@@ -1,78 +1,35 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using TetrisInterfaces;
 
-
-
-
-namespace TetrisLogic
+namespace TetrisLogic.Figures
 {
-    internal static class Initializer
+    public static class Initializer
     {
-
-        static Initializer()
-        {
-            if (RotatabilityOfFigures.Length == FigureNames.Length && FigureNames.Length == BodyFigures.Length)
-            {
-                NumberOfFigures = (byte)RotatabilityOfFigures.Length;
-            }
-            else
-            {
-                throw new Exception("Error in the initialization data of the figures");
-            }
-
-            if (FillingOfLevels.Length == LevelVelocity.Length)
-            {
-                NumberOfLev = LevelVelocity.Length;
-            }
-            else
-            {
-                throw new Exception("Error in the initialization data of the levels");
-            }
-
-        }
-
-        public const byte NumberOfColors = 6;
+        public const int SizeFigureField = 4;
+        public const int NumberOfColors = 6;
         public const int LimitScore = 2000;
-        public const byte NumberOfFigurePoint = 4;
+        public const int NumberOfFigurePoint = 4;
+        public const int WidthHeighFigureField = 4;
+        public const int NumberOfLevels = 10;
+        public const int NumberOfFigures = 7;
 
-
-        public static Figure GetNewFigure()
+        public static float GetVelocityByLevel(int lvl)
         {
-            Figure figure = null;
-            if (NumberOfFigures > 0)
-            {
-                int choseFigure = Rnd.Next(0, NumberOfFigures);
-                byte color = (byte)Rnd.Next(0, NumberOfColors);
-                figure = new Figure(FigureNames[choseFigure], RotatabilityOfFigures[choseFigure], color, (byte[,])BodyFigures[choseFigure].Clone());
-            }
-            return figure;
+            return LevelVelocity[lvl];
         }
-
-        public static int NumberOfLevel
-        {
-            get
-            {
-                return NumberOfLev;
-            }
-        }
-
-        public static float GetVelocity(int level)
-        {
-            return LevelVelocity[level];
-        }
-
-        public static byte[,] GetLevelFilling(int level)
-        {
-            return (byte[,])FillingOfLevels[level].Clone();
-        }
-
 
         #region Data for game levels
 
+
         //velocity of moving of the figure on each of ten level
-        static readonly float[] LevelVelocity = { 1, 1, 1.2f, 1.2f, 1.5f, 1.71f, 2, 2.4f, 3, 6 };
+        private static readonly float[] LevelVelocity = { 1, 1, 1.2f, 1.2f, 1.5f, 1.71f, 2, 2.4f, 3, 6 };
 
 
-        static readonly byte[][,] FillingOfLevels ={
+        private static readonly byte[][,] FillingOfLevels ={
             null,                                 //Level 1
             null,                                 //Level 2
             null,                                 //Level 3
@@ -86,7 +43,7 @@ namespace TetrisLogic
                 {1,1,1,1,1,0,0,1,1,1},   //Level 6
                 {0,1,0,1,0,1,1,1,1,1},
                 {0,1,0,1,1,1,0,0,1,0}},
- 
+
             new byte[,] {
                 {1,1,0,1,1,0,0,1,1,1},   //Level 7
                 {0,1,0,1,0,1,0,0,0,1},
@@ -97,66 +54,91 @@ namespace TetrisLogic
                 {1,1,1,0,1,0,1,1,0,1},
                 {1,1,0,0,1,0,1,0,1,1},
                 {1,0,1,1,0,0,0,1,1,1}},
- 
+
             new byte[,] {
                 {1,1,0,1,1,0,1,1,1,1},   //Level 9
                 {0,1,1,1,1,0,1,0,1,0},
                 {0,1,0,0,1,0,1,0,1,1},
                 {1,1,1,1,1,0,1,0,0,1}},
- 
+
             new byte[,] {
                 {1,0,0,1,1,0,1,1,1,1},   //Level 10
                 {0,0,1,1,1,0,1,0,1,0},
                 {0,0,1,0,1,0,1,0,1,1},
-                {1,0,1,1,1,0,1,0,0,1}} 
+                {1,0,1,1,1,0,1,0,0,1}}
         };
-
-
 
 
         #endregion
 
-        #region Data for initializing of figures
-
-        private static readonly bool[] RotatabilityOfFigures =
+        public static Figure GetFigure(GameBoard board)
         {
-            false,  //square
-            true,   //stick 
-            true,   //left zigzag
-            true,   //right zigzag
-            true,   //right Г 
-            true,   //left  Г
-            true    // Т
-        };
+            Figure fig;
+            int choseFigure = Rnd.Next(0, NumberOfFigures);
+            TColor color = (TColor)Rnd.Next(1, NumberOfColors + 1);
+            int[,] body;
+            switch (choseFigure)
+            {
+                case 0:
+                    body = new int[,]{{1, 0},{2, 0},{2, 1},{2, 2}};
+                    fig = new LeftG(color, (int[,])body.Clone(), board);
+                    break;
+                case 1:
+                    body = new int[,] {{2, 0}, {2, 1}, {1, 2}, {2, 2}};
+                    fig = new RightG(color, (int[,])body.Clone(), board);
+                    break;
+                case 2:
+                    body = new int[,] {{1, 0}, {1, 1}, {2, 1}, {2, 2}};
+                    fig = new LeftZigzag(color, (int[,])body.Clone(), board);
+                    break;
+                case 3:
+                    body = new int[,] {{2, 0}, {1, 1}, {2, 1}, {1, 2}};
+                    fig = new RightZigzag(color, (int[,])body.Clone(), board);
+                    break;
+                case 4:
+                    body = new int[,] {{1, 1}, {2, 1}, {3, 1}, {2, 2}};
+                    fig = new LetterT(color, (int[,])body.Clone(), board);
+                    break;
+                case 5:
+                    body = new int[,] {{1, 1}, {2, 1}, {1, 2}, {2, 2}};
+                    fig = new Square(color, (int[,])body.Clone(), board);
+                    break;
+                case 6:
+                    body = new int[,] {{2, 0}, {2, 1}, {2, 2}, {2, 3}};
+                    fig = new Stick(color, (int[,])body.Clone(), board);
+                    break;
+                default:
+                    body = new int[,] {{1, 1}, {2, 1}, {1, 2}, {2, 2}};
+                    fig = new Square(color, (int[,])body.Clone(), board);
+                    break;                    
+            }
+            return fig;
+        }
 
-        private static readonly string[] FigureNames =
+
+
+        public static void FillBoardFieldByLevel(BoardPoint[,] field, int level)
         {
-            "Square",
-            "Stick",
-            "Left zigzag",
-            "Right zigzag",
-            "Right Г",
-            "Left Г",
-            "T figure"
+            Random rnd = new Random();
+            byte[,] fillLevel = FillingOfLevels[level];
+            // index of array Levels number 0 fit Level 4 of the game
+            if (fillLevel != null)
+            {
+                for (int i = fillLevel.GetLength(0) - 1; i >= 0; i--)
+                {
+                    for (int j = 0; j < 10; j++)
+                    {
+                        if (fillLevel[i, j] == 1)
+                        {
+                            //entering the points of the figure into the Field of the structure board
+                            field[j, 19 - i] = new BoardPoint((TColor)(rnd.Next(0, Initializer.NumberOfColors)));
+                        }
+                    }
+                }
+            }          
+        }       
 
-        };
 
-        private static readonly byte[][,] BodyFigures =
-        {
-            new byte[,] {{1, 1}, {2, 1}, {1, 2}, {2, 2}}, //square
-            new byte[,] {{2, 0}, {2, 1}, {2, 2}, {2, 3}}, //stick 
-            new byte[,] {{1, 0}, {1, 1}, {2, 1}, {2, 2}}, //left zigzag
-            new byte[,] {{2, 0}, {1, 1}, {2, 1}, {1, 2}}, //right zigzag
-            new byte[,] {{2, 0}, {2, 1}, {1, 2}, {2, 2}}, //right Г 
-            new byte[,] {{1, 0}, {2, 0}, {2, 1}, {2, 2}}, //left  Г
-            new byte[,] {{1, 1}, {2, 1}, {3, 1}, {2, 2}}, // Т
-        };
-
-        #endregion
-
-        private static readonly int NumberOfLev;
-        private static readonly byte NumberOfFigures;
         private static readonly Random Rnd = new Random();
-
     }
 }

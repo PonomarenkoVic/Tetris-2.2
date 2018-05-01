@@ -52,6 +52,7 @@
             // GBoard
             // 
             this.GBoard.AccessibleName = "PictureBox1";
+            this.GBoard.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(182)))), ((int)(((byte)(192)))), ((int)(((byte)(235)))));
             this.GBoard.ErrorImage = null;
             this.GBoard.InitialImage = null;
             this.GBoard.Location = new System.Drawing.Point(22, 38);
@@ -89,28 +90,28 @@
             // 
             this.StripMenuStartItem.AccessibleName = "StartButton";
             this.StripMenuStartItem.Name = "StripMenuStartItem";
-            this.StripMenuStartItem.Size = new System.Drawing.Size(152, 22);
+            this.StripMenuStartItem.Size = new System.Drawing.Size(108, 22);
             this.StripMenuStartItem.Text = "Старт";
             this.StripMenuStartItem.Click += new System.EventHandler(this.StripMenuStartItem_Click);
             // 
             // StripMenuStopItem
             // 
             this.StripMenuStopItem.Name = "StripMenuStopItem";
-            this.StripMenuStopItem.Size = new System.Drawing.Size(152, 22);
+            this.StripMenuStopItem.Size = new System.Drawing.Size(108, 22);
             this.StripMenuStopItem.Text = "Стоп";
             this.StripMenuStopItem.Click += new System.EventHandler(this.StripMenuStopItem_Click);
             // 
             // StripMenuPauseItem
             // 
             this.StripMenuPauseItem.Name = "StripMenuPauseItem";
-            this.StripMenuPauseItem.Size = new System.Drawing.Size(152, 22);
+            this.StripMenuPauseItem.Size = new System.Drawing.Size(108, 22);
             this.StripMenuPauseItem.Text = "Пауза";
             this.StripMenuPauseItem.Click += new System.EventHandler(this.StripMenuPauseItem_Click);
             // 
             // StripMenuExitItem
             // 
             this.StripMenuExitItem.Name = "StripMenuExitItem";
-            this.StripMenuExitItem.Size = new System.Drawing.Size(152, 22);
+            this.StripMenuExitItem.Size = new System.Drawing.Size(108, 22);
             this.StripMenuExitItem.Text = "Выход";
             this.StripMenuExitItem.Click += new System.EventHandler(this.StripMenuExitItem_Click);
             // 
@@ -123,6 +124,7 @@
             // 
             // NFigureBoard
             // 
+            this.NFigureBoard.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(182)))), ((int)(((byte)(192)))), ((int)(((byte)(235)))));
             this.NFigureBoard.Location = new System.Drawing.Point(302, 38);
             this.NFigureBoard.Margin = new System.Windows.Forms.Padding(2);
             this.NFigureBoard.Name = "NFigureBoard";
@@ -214,7 +216,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.BackColor = System.Drawing.SystemColors.Menu;
+            this.BackColor = System.Drawing.Color.Gainsboro;
             this.ClientSize = new System.Drawing.Size(432, 559);
             this.Controls.Add(this.GameOverLabel);
             this.Controls.Add(this.Level);

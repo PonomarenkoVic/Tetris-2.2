@@ -3,7 +3,7 @@ using System.Windows.Forms;
 
 namespace TetrisForm
 {
-    static class Program
+    static class TetrisMain
     {
         /// <summary>
         /// The main entry point for the application.
