@@ -23,21 +23,24 @@ namespace TetrisForm
         public TetrisForm()
         {
             InitializeComponent();
-            //GBoard.BackColor = Color.LightBlue;
-            //NFigureBoard.BackColor = Color.LightBlue;
- 
+            _timer = new DispatcherTimer();           
             _gameBoard = new GameBoard(10, 20);
-            _gameBoard.UpdateEvent += Updating;
-            _gameBoard.GameOverEvent += GameOver;
-            _gameBoard.SoundEvent += Sound;
-            _gameBoard.VelocityChangeEvent += VelocityChanged;
-            _timer = new DispatcherTimer();
-            _timer.Tick += Step;
+            SubscribeToEvents();
         }
+
 
         const byte SizePoint = 25;
         const byte WidthHeightNFigureBoard = 4;
 
+
+        private void SubscribeToEvents()
+        {
+            _gameBoard.UpdateEvent += Updating;
+            _gameBoard.GameOverEvent += GameOver;
+            _gameBoard.SoundEvent += Sound;
+            _gameBoard.VelocityChangeEvent += VelocityChanged;
+            _timer.Tick += Step;
+        }
 
         private void TetrisForm_Load(object sender, EventArgs e)
         {
@@ -45,11 +48,6 @@ namespace TetrisForm
             StripMenuPauseItem.Enabled = false;
             _graphicGameBoard = GBoard.CreateGraphics();
             _graphicNextFigure = NFigureBoard.CreateGraphics();
-            //LinearGradientBrush grBrush = new LinearGradientBrush(GBoard.DisplayRectangle, Color.Cyan, Color.Beige, 0.5f);
-            ////grBrush.GradientStops.Add(new GradientStop(){Color = System.Windows.Media.Color.FromArgb(250, 250, 250, 250), Offset = 0});
-            ////grBrush.GradientStops.Add(new GradientStop() { Color = System.Windows.Media.Color.FromArgb(178, 23, 31, 110), Offset = 0.5 });
-            ////grBrush.GradientStops.Add(new GradientStop() { Color = System.Windows.Media.Color.FromArgb(0, 0, 0, 0), Offset = 1});
-            //_graphicGameBoard.FillRectangle(grBrush, GBoard.DisplayRectangle);
         }
 
 
@@ -62,10 +60,10 @@ namespace TetrisForm
             global::TetrisForm.Sound.Play(arg.Sound);
         }
 
-
         private void GameOver()
         {
-            GameOverLabel.Visible = true;
+            MessageLabel.Text = "Конец игры";
+            MessageLabel.Visible = true;
             _timer.Stop();   
         }
 
@@ -77,10 +75,15 @@ namespace TetrisForm
             ShowGameBoard(arg);
             ShowNextFigure(arg);
         }
-      
+
+        private void Step(object sender, EventArgs eventArgs)
+        {
+            _gameBoard.Step();
+        }
+
+
 
         #endregion
-
 
 
         #region Control
@@ -122,24 +125,25 @@ namespace TetrisForm
             
         }
 
-
         private void StripMenuStartItem_Click(object sender, EventArgs e)
         {
-            GameOverLabel.Visible = false;           
+            MessageLabel.Visible = false;           
             _gameBoard.Start();
             SetMenuStatus(true);
             _timer.Start();
         }
-
 
         private void StripMenuPauseItem_Click(object sender, EventArgs e)
         {
             if (_timer.IsEnabled)
             {
                 _timer.Stop();
+                MessageLabel.Text = "     Пауза";
+                MessageLabel.Visible = true;
             }
             else
             {
+                MessageLabel.Visible = false;
                 _timer.Start();
             }            
         }
@@ -170,18 +174,10 @@ namespace TetrisForm
             MessageBox.Show(Resources.TetrisForm_StripMenuInformationItem_Click_, "Control");
         }
 
+
+
         #endregion
 
-
-        private void Step(object sender, EventArgs eventArgs)
-        {
-            _gameBoard.Step();
-        }
-
-        private void VelocityChanged(object obj, VelocChangedEventArg arg)
-        {
-            _timer.Interval = new TimeSpan(0, 0, 0, 0, (int)(600 / arg.Vel));
-        }
 
         #region Showing
 
@@ -229,6 +225,12 @@ namespace TetrisForm
         }
 
         #endregion
+
+
+        private void VelocityChanged(object obj, VelocChangedEventArg arg)
+        {
+            _timer.Interval = new TimeSpan(0, 0, 0, 0, (int)(600 / arg.Vel));
+        }
 
 
         Graphics _graphicGameBoard;

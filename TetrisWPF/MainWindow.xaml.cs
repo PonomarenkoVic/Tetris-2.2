@@ -21,23 +21,24 @@ namespace TetrisWPF
         public MainWindow()
         {
             InitializeComponent();
-             _viewModel = new global::ViewModel.ViewModel(10, 20);
+            _timer = new DispatcherTimer();
+            _viewModel = new global::ViewModel.ViewModel(10, 20);
+            DataContext = _viewModel.GetDataContext();
+            SubscribeToEvents();
+        }
+
+        private const int _width = 10;
+        private const int _height = 20;
+
+
+        private void SubscribeToEvents()
+        {
             _viewModel.UpdateBoard += Update;
             _viewModel.GameOverEvent += GameOver;
             _viewModel.SoundEvent += Sound;
             _viewModel.VelChangeEvent += VelocityChanged;
-            _timer = new DispatcherTimer();
             _timer.Tick += Step;
-            DataContext = _viewModel.GetDataContext();          
         }
-
-
-
-        const byte StrokeThickness = 1;
-        const byte SizeRectangle = 25;
-        const byte WidthHeightNFigureBoard = 4;
-        const float Opac = 1f;
-
 
         #region Methods by subscription
 
@@ -59,12 +60,31 @@ namespace TetrisWPF
             SetMenuItemStatus(false);
         }
 
+        private void Update(object sender, ShowEventArg arg)
+        {
+            if (arg != null)
+            {
+                DrawGameBoard(arg);
+                DrawNextFigure(arg);
+            }
+        }
+
+        private void VelocityChanged(object obj, VelocChangedEventArg arg)
+        {
+            _timer.Interval = new TimeSpan(0, 0, 0, 0, (int)(600 / arg.Vel));
+        }
+
+        private void Step(object sender, EventArgs eventArgs)
+        {
+            _viewModel.Step();
+        }
 
         #endregion
-       
-      
+
+
 
         #region  Control
+
         private void Window_KeyDown(object sender, KeyEventArgs e)
         {
             Direction dir = Direction.Empty;
@@ -95,13 +115,10 @@ namespace TetrisWPF
             }           
         }
 
-
         private void StopGame_Click(object sender, RoutedEventArgs e)
         {                 
             GameOver();
         }
-
-       
 
         private void PauseGame_Click(object sender, RoutedEventArgs e)
         {         
@@ -129,7 +146,6 @@ namespace TetrisWPF
             MessageBox.Show("Left - <\nRight - >\nDown - v\nTurn - Space\nPause - P", "Control");
         }
 
-
         private void StartGame_OnClick(object sender, RoutedEventArgs e)
         {
             _viewModel.Start();          
@@ -138,7 +154,6 @@ namespace TetrisWPF
             _timer.Start();
         }
 
-
         private void SetMenuItemStatus(bool status)
         {
             StopGame.IsEnabled = status;
@@ -146,84 +161,58 @@ namespace TetrisWPF
             PauseGame.IsEnabled = status;
             Information.IsEnabled = !status;
         }
+
         #endregion
 
 
-        private void Step(object sender, EventArgs eventArgs)
-        {
-            _viewModel.Step();
-        }
-
-        private void VelocityChanged(object obj, VelocChangedEventArg arg)
-        {
-            _timer.Interval = new TimeSpan(0, 0, 0, 0, (int)(600 / arg.Vel)); 
-        }
 
         #region Showing
 
 
-        private void Update(object sender, ShowEventArg arg)
+        private void DrawNextFigure(ShowEventArg arg)
         {
-            if (arg != null)
+            if (arg.NextFigure != null)
             {
-                if (arg.Board != null)
+                NextFigureBoard.Children.Clear();
+                for (byte i = 0; i < arg.NextFigure.GetLength(1); i++)
                 {
-                    int boardWidth = arg.Board.GetLength(0);
-                    int boardHight = arg.Board.GetLength(1);
-                    GameBoard.Children.Clear();
-                    for (byte i = 0; i < boardHight; i++)
+                    for (byte j = 0; j < arg.NextFigure.GetLength(0); j++)
                     {
-                        for (byte j = 0; j < boardWidth; j++)
+                        if (arg.NextFigure[j, i] != null)
                         {
-                            if (arg.Board[j, i] != null)
-                            {
-                                SolidColorBrush color = View.GetColor(arg.Board[j, i].Col);
-                                GameBoard.Children.Add(CreateRectangle(color, j, i));
-
-                            }
+                            SolidColorBrush color = View.GetColor(arg.NextFigure[j, i].Col);
+                            NextFigureBoard.Children.Add(View.CreateRectangle(color, j, i));
                         }
                     }
                 }
-
-                if (arg.NextFigure != null)
-                {
-                    NextFigureBoard.Children.Clear();
-                    for (byte i = 0; i < arg.NextFigure.GetLength(1); i++)
-                    {
-                        for (byte j = 0; j < arg.NextFigure.GetLength(0); j++)
-                        {
-                            if (arg.NextFigure[j, i] != null)
-                            {
-                                SolidColorBrush color = View.GetColor(arg.NextFigure[j, i].Col);
-                                NextFigureBoard.Children.Add(CreateRectangle(color, j, i));
-                            }
-                        }
-                    }
-                }
-                
             }
         }
 
-        private Rectangle CreateRectangle(SolidColorBrush color, byte j, byte i)
+        private void DrawGameBoard(ShowEventArg arg)
         {
-            Rectangle rectangle = new Rectangle()
-            {
-                StrokeThickness = StrokeThickness,
-                Stroke = BorderColor,
-                Width = SizeRectangle,
-                Height = SizeRectangle,
-                Opacity = Opac
-            };
-
-            rectangle.Fill = color;
-            rectangle.SetValue(Canvas.LeftProperty, j * (double)SizeRectangle);
-            rectangle.SetValue(Canvas.TopProperty, i * (double)SizeRectangle);
-            return rectangle;
+            if (arg.Board != null)
+            {              
+                GameBoard.Children.Clear();
+                for (byte i = 0; i < _height; i++)
+                {
+                    for (byte j = 0; j < _width; j++)
+                    {
+                        if (arg.Board[j, i] != null)
+                        {
+                            SolidColorBrush color = View.GetColor(arg.Board[j, i].Col);
+                            GameBoard.Children.Add(View.CreateRectangle(color, j, i));
+                        }
+                    }
+                }
+            }
         }
+
 
         #endregion
 
-        private static readonly SolidColorBrush BorderColor = new SolidColorBrush(Colors.Black);     
+       
+
+           
         private readonly global::ViewModel.ViewModel _viewModel;
         private readonly DispatcherTimer _timer;
     }

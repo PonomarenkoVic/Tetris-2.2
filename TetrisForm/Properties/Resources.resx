@@ -121,4 +121,7 @@ Down - v
 TurnFigure - Space
 Pause - P</value>
   </data>
+  <data name="TetrisForm_GameOver_Конец_игры" xml:space="preserve">
+    <value>Конец игры</value>
+  </data>
 </root>

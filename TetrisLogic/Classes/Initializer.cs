@@ -115,8 +115,6 @@ namespace TetrisLogic.Figures
             return fig;
         }
 
-
-
         public static void FillBoardFieldByLevel(BoardPoint[,] field, int level)
         {
             Random rnd = new Random();

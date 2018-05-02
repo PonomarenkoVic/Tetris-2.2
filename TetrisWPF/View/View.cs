@@ -1,11 +1,19 @@
 ﻿using System;
+using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows.Shapes;
 using TetrisInterfaces;
 
 namespace TetrisWPF.ViewModel
 {
     internal static class View
     {
+        private const byte StrokeThickness = 1;
+        private const byte SizeRectangle = 25;
+        private const byte WidthHeightNFigureBoard = 4;
+        private const float Opac = 1f;
+        private static readonly SolidColorBrush BorderColor = new SolidColorBrush(Colors.Black);
+
         public static SolidColorBrush GetColor(TColor source)
         {
             SolidColorBrush color;
@@ -34,6 +42,25 @@ namespace TetrisWPF.ViewModel
                   break;
             }
             return color;
+        }
+
+
+
+        public static Rectangle CreateRectangle(SolidColorBrush color, byte j, byte i)
+        {
+            Rectangle rectangle = new Rectangle()
+            {
+                StrokeThickness = StrokeThickness,
+                Stroke = BorderColor,
+                Width = SizeRectangle,
+                Height = SizeRectangle,
+                Opacity = Opac
+            };
+
+            rectangle.Fill = color;
+            rectangle.SetValue(Canvas.LeftProperty, j * (double)SizeRectangle);
+            rectangle.SetValue(Canvas.TopProperty, i * (double)SizeRectangle);
+            return rectangle;
         }
     }
 }

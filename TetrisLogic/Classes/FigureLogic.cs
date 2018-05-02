@@ -14,8 +14,6 @@ namespace TetrisLogic.Figures
 {
     public static class FigureLogic
     {
-
-
         public static void DelTopFreeLinesAndCenter(int[,] body)
         {
             int num = Initializer.SizeFigureField;
@@ -68,9 +66,6 @@ namespace TetrisLogic.Figures
             }
         }
 
-
-
-
         public static int[,] GetCoordTurnedFigure(int[,] body, BoardPoint[,] field, int correction)
         {
             // determining of square of the current figure
@@ -104,8 +99,7 @@ namespace TetrisLogic.Figures
             return rotatedFig;
         }
 
-        private static void DeterminCoordSquareFig(int[,] fig, out int xMin, out int xMax, out int yMin,
-            out int yMax)
+        private static void DeterminCoordSquareFig(int[,] fig, out int xMin, out int xMax, out int yMin, out int yMax)
         {
             // array of coordinates of the current figure
             // determining of square of the current figure
@@ -137,7 +131,6 @@ namespace TetrisLogic.Figures
             }
         }
 
-
         private static bool CheckAllowToTurn(int[,] rotatedFig, BoardPoint[,] field)
         {
             bool permition = true;
@@ -153,7 +146,6 @@ namespace TetrisLogic.Figures
             }            
             return permition;
         }
-
 
         public static List<Point> GetBoundaryFigurePoints(int[,] body, Direction dir)
         {

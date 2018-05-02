@@ -33,6 +33,7 @@ namespace TetrisLogic.Figures
 
 
         #region Properties
+
         public BoardPoint[,] Field
         {
             get
@@ -44,6 +45,7 @@ namespace TetrisLogic.Figures
                 _field = (BoardPoint[,])value.Clone();
             }
         }
+
         public int Width
         {
             get
@@ -62,6 +64,7 @@ namespace TetrisLogic.Figures
                 }
             }
         }
+
         public int Height
         {
             get
@@ -236,17 +239,6 @@ namespace TetrisLogic.Figures
             }
         }
 
-        private void ClearGameBoard()
-        {
-            for (int i = 0; i < _height; i++)
-            {
-                for (int j = 0; j < _width; j++)
-                {
-                    _field[j, i] = null;
-                }
-            }
-        }
-
         private void Reset()
         {
 
@@ -257,7 +249,18 @@ namespace TetrisLogic.Figures
             _burnedLines = 0;
             _score = 0;
             SetVelocity();
-        }     
+        }
+
+        private void ClearGameBoard()
+        {
+            for (int i = 0; i < _height; i++)
+            {
+                for (int j = 0; j < _width; j++)
+                {
+                    _field[j, i] = null;
+                }
+            }
+        }
 
         private bool CheckScoreLevelUp()
         {

@@ -43,7 +43,7 @@
             this.BurnedLine = new System.Windows.Forms.Label();
             this.Level = new System.Windows.Forms.Label();
             this.LevelText = new System.Windows.Forms.Label();
-            this.GameOverLabel = new System.Windows.Forms.Label();
+            this.MessageLabel = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.GBoard)).BeginInit();
             this.MainMenu.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.NFigureBoard)).BeginInit();
@@ -200,17 +200,17 @@
             this.LevelText.TabIndex = 7;
             this.LevelText.Text = "Уровень";
             // 
-            // GameOverLabel
+            // MessageLabel
             // 
-            this.GameOverLabel.AutoSize = true;
-            this.GameOverLabel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(182)))), ((int)(((byte)(192)))), ((int)(((byte)(235)))));
-            this.GameOverLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.GameOverLabel.Location = new System.Drawing.Point(69, 260);
-            this.GameOverLabel.Name = "GameOverLabel";
-            this.GameOverLabel.Size = new System.Drawing.Size(159, 31);
-            this.GameOverLabel.TabIndex = 9;
-            this.GameOverLabel.Text = "Конец игры";
-            this.GameOverLabel.Visible = false;
+            this.MessageLabel.AutoSize = true;
+            this.MessageLabel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(182)))), ((int)(((byte)(192)))), ((int)(((byte)(235)))));
+            this.MessageLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.MessageLabel.Location = new System.Drawing.Point(69, 260);
+            this.MessageLabel.Name = "MessageLabel";
+            this.MessageLabel.Size = new System.Drawing.Size(159, 31);
+            this.MessageLabel.TabIndex = 9;
+            this.MessageLabel.Text = "Конец игры";
+            this.MessageLabel.Visible = false;
             // 
             // TetrisForm
             // 
@@ -218,7 +218,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Gainsboro;
             this.ClientSize = new System.Drawing.Size(432, 559);
-            this.Controls.Add(this.GameOverLabel);
+            this.Controls.Add(this.MessageLabel);
             this.Controls.Add(this.Level);
             this.Controls.Add(this.LevelText);
             this.Controls.Add(this.BurnedLine);
@@ -263,7 +263,7 @@
         private System.Windows.Forms.Label Level;
         private System.Windows.Forms.Label LevelText;
         private System.Windows.Forms.ToolStripMenuItem StripMenuStopItem;
-        private System.Windows.Forms.Label GameOverLabel;
+        private System.Windows.Forms.Label MessageLabel;
     }
 }
 

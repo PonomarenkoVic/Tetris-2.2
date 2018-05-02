@@ -27,33 +27,26 @@ namespace TetrisConsole
             _board.UpdateEvent += Update;
             Timer.Elapsed += Step;
             _board.VelocityChangeEvent += VelocityChanged;
+            
+            Console.CursorVisible = false;
+            Console.WindowWidth = 56;
+            Console.WindowHeight = 38;
+            Drawing.DrawInitialData();      
+            StartKeyControl();
+        }
+
+        private static void StartKeyControl()
+        {
             bool statusGame = false;
             bool statusPause = false;
-            Console.CursorVisible = false;
-            Console.WindowWidth = 60;
-            Console.WindowHeight = 45;
-            Console.BackgroundColor = ConsoleColor.Black;
-
-            Form f = new Form();
-            f.BackColor = Color.White;
-            //f.FormBorderStyle = FormBorderStyle.None;
-            f.Bounds = Screen.PrimaryScreen.Bounds;
-            f.TopMost = true;
-            Application.EnableVisualStyles();
-            Application.Run(f);
-
-
             while (true)
             {
-
-                //Thread.Sleep(20);
                 if (Console.KeyAvailable == true)
                 {
                     var key = Console.ReadKey(true);
                     Direction dir = Direction.Empty;
                     switch (key.Key)
                     {
-
                         case ConsoleKey.DownArrow:
                             dir = Direction.Down;
                             break;
@@ -67,44 +60,59 @@ namespace TetrisConsole
                             _board.Turn();
                             break;
                         case ConsoleKey.P:
-                            if (!statusPause)
-                            {
-                                statusPause = true;
-                                Timer.Stop();
-                                Drawing.Draw("Пауза");
-                            }
-                            else
-                            {
-                                statusPause = false;
-                                Timer.Start();
-                            }
+                            Pause(ref statusPause);
                             break;
                         case ConsoleKey.S:
-                            if (!statusGame)
-                            {
-                                statusGame = true;                               
-                                _board.Start();
-                                Timer.Start();
-                            }
+                            Start(ref statusGame);
                             break;
                         case ConsoleKey.Q:
-                            statusGame = false;
-                            statusPause = false;
-                            Timer.Stop();
-                            GameOver();
+                            Stop(ref statusGame, ref statusPause);
                             break;
                         default:
                             dir = Direction.Empty;
                             break;
                     }
+
                     if (dir != Direction.Empty && statusPause != true && statusGame == true)
                     {
                         _board.Move(dir);
                     }
                 }
-                
             }
+        }
 
+        private static void Stop(ref bool statusGame, ref bool statusPause)
+        {
+            statusGame = false;
+            statusPause = false;
+            Timer.Stop();
+            GameOver();
+ 
+        }
+
+        private static void Start(ref bool statusGame)
+        {
+            if (!statusGame)
+            {
+                statusGame = true;
+                _board.Start();
+                Timer.Start();
+            }
+        }
+
+        private static void Pause(ref bool statusPause)
+        {
+            if (!statusPause)
+            {
+                statusPause = true;
+                Timer.Stop();
+                Drawing.Draw("Пауза");
+            }
+            else
+            {
+                statusPause = false;
+                Timer.Start();
+            }
         }
 
         private static void Step(object sender, ElapsedEventArgs e)
@@ -124,16 +132,13 @@ namespace TetrisConsole
 
         private static void GameOver()
         {
-            Drawing.Draw("Конец игры");
+            Drawing.Draw("     Game over");
         }
-
-
 
         private static void VelocityChanged(object obj, VelocChangedEventArg arg)
         {
             Timer.Interval = 600 / arg.Vel;
         }
-
 
         private static readonly Timer Timer = new Timer();
         private static GameBoard _board;

@@ -15,8 +15,8 @@ namespace TetrisLogic.Figures
         {
             Color = color;
             _body = (int[,])body.Clone();
-            _board = board;
-            correctionTurn = 0;
+            Board = board;
+            _correctionTurn = 0;
         }
 
         public TColor Color { get; }
@@ -33,16 +33,16 @@ namespace TetrisLogic.Figures
         {
             get
             {
-                if (correctionTurn == 0)
+                if (_correctionTurn == 0)
                 {
-                    correctionTurn = 1;
+                    _correctionTurn = 1;
                 }
                 else
                 {
-                    correctionTurn = 0;
+                    _correctionTurn = 0;
                 }
 
-                return correctionTurn;
+                return _correctionTurn;
             }
         }
 
@@ -69,7 +69,7 @@ namespace TetrisLogic.Figures
         protected bool TurnFigure()
         {
             bool result = true;
-            int[,] turnedFigure = FigureLogic.GetCoordTurnedFigure(_body, _board.Field, CorrectionTurn);
+            int[,] turnedFigure = FigureLogic.GetCoordTurnedFigure(_body, Board.Field, CorrectionTurn);
             if (turnedFigure != null)
             {
                 _body = (int[,])turnedFigure.Clone();
@@ -97,12 +97,8 @@ namespace TetrisLogic.Figures
             {
                 
                 int x = point.X + dx;
-                int y = point.Y + dy;
-                if (y == 19)
-                {
-                    int g = 2;
-                }
-                if (!CheckAllowedRegion(dir, x, y) || _board.Field[x, y] != null)
+                int y = point.Y + dy;                
+                if (!CheckAllowedRegion(dir, x, y) || Board.Field[x, y] != null)
                 {
                     result = false;
                     break;
@@ -114,7 +110,7 @@ namespace TetrisLogic.Figures
 
         private  bool CheckAllowedRegion(Direction dir, int x, int y)
         {
-            return x >= 0 && y >= 0 && x < _board.Width && y < _board.Height;
+            return x >= 0 && y >= 0 && x < Board.Width && y < Board.Height;
         }
 
 
@@ -126,8 +122,8 @@ namespace TetrisLogic.Figures
             return fig;
         }
 
-        protected GameBoard _board;
-        protected int[,] _body;
-        private int correctionTurn;
+        protected GameBoard Board;
+        private int[,] _body;
+        private int _correctionTurn;
     }
 }
