@@ -1,18 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Drawing.Text;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Windows.Threading;
 using TetrisInterfaces;
 using TetrisInterfaces.Enum;
+using TetrisLogic.Figures;
 using TetrisLogic.Interfaces;
-using Timer = System.Timers.Timer;
 
-namespace TetrisLogic.Figures
+namespace TetrisLogic.Classes
 {
     
 
@@ -48,10 +40,7 @@ namespace TetrisLogic.Figures
 
         public int Width
         {
-            get
-            {
-                return _width;
-            }
+            get => _width;
             private set
             {
                 if (value > 5 && value < 20)
@@ -67,10 +56,7 @@ namespace TetrisLogic.Figures
 
         public int Height
         {
-            get
-            {
-                return _height;
-            }
+            get => _height;
             private set
             {
                 if (value > 10 && value < 30)
@@ -127,13 +113,10 @@ namespace TetrisLogic.Figures
                             LevelUp();
                         }
                         ExchangeFigures();
-                        if (!FigureLogic.CheckFreeArea(_currentFigure, Field))
+                        if (!Logic.CheckFreeArea(_currentFigure, Field))
                         {
                             _currentFigure = null;
-                            if (GameOverEvent != null)
-                            {
-                                GameOverEvent();
-                            }
+                            GameOverEvent?.Invoke();
                         }
                         else
                         {
@@ -145,10 +128,7 @@ namespace TetrisLogic.Figures
                 {
                     if (_currentFigure.Move(dir))
                     {
-                        if (SoundEvent != null)
-                        {
-                            SoundEvent(this, new SoundEventArg(TSound.Stepping));
-                        }
+                        SoundEvent?.Invoke(this, new SoundEventArg(TSound.Stepping));
                         Update();
                     }
                 }
@@ -156,12 +136,11 @@ namespace TetrisLogic.Figures
 
         public void Turn()
         {
-            IRotatable fig = _currentFigure as IRotatable;
-            if (fig != null)
+            if (_currentFigure is IRotatable fig)
             {               
-                if (fig.Turn() && SoundEvent != null)
+                if (fig.Turn())
                 {
-                    SoundEvent(this, new SoundEventArg(TSound.Turning));
+                    SoundEvent?.Invoke(this, new SoundEventArg(TSound.Turning));
                 }
                 Update();
             }
@@ -233,10 +212,7 @@ namespace TetrisLogic.Figures
 
         private void SetVelocity()
         {
-            if (VelocityChangeEvent != null)
-            {
-                VelocityChangeEvent(this, new VelocChangedEventArg(Initializer.GetVelocityByLevel(_level)));
-            }
+            VelocityChangeEvent?.Invoke(this, new VelocChangedEventArg(Initializer.GetVelocityByLevel(_level)));
         }
 
         private void Reset()
@@ -305,12 +281,13 @@ namespace TetrisLogic.Figures
             }
             _score += 100;
             _burnedLines += 1;
-            if (SoundEvent != null)
-            {
-                SoundEvent(this, new SoundEventArg(TSound.Burning));
-            }
+            SoundEvent?.Invoke(this, new SoundEventArg(TSound.Burning));
         }
 
+        public bool SaveGame()
+        {
+            return Logic.SaveGame(Field, (int[,])_currentFigure.Body.Clone(), (int[,])_nextFigure.Body.Clone(), _level, _burnedLines, _score);
+        }
 
 
 

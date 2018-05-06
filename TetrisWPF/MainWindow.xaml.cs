@@ -2,6 +2,7 @@
 using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
@@ -18,17 +19,42 @@ namespace TetrisWPF
     /// </summary>
     public partial class MainWindow
     {
+
+
+        private float Velosity
+        {
+            set => _timer.Interval = new TimeSpan(0, 0, 0, 0, (int)(600 / value));
+        }
+
+
         public MainWindow()
         {
             InitializeComponent();
             _timer = new DispatcherTimer();
-            _viewModel = new global::ViewModel.ViewModel(10, 20);
-            DataContext = _viewModel.GetDataContext();
+            _viewModel = new global::ViewModel.ViewModel(_width, _height);
+            DataContext = _viewModel;
             SubscribeToEvents();
+            //    var binding = new Binding("Velocity") { Mode = BindingMode.OneWay };
+            //    this.SetBinding(Velosity, binding);
         }
 
         private const int _width = 10;
         private const int _height = 20;
+
+
+        //public readonly DependencyProperty ViewModelFloatProperty =
+        //    DependencyProperty.Register(
+        //        nameof(Velosity),
+        //        typeof(float),
+        //        typeof(MainWindow),
+        //        new PropertyMetadata(OnVelocityChanged)
+        //    );
+
+        private  void OnVelocityChanged(DependencyObject o, DependencyPropertyChangedEventArgs e)
+        {
+            _timer.Interval = new TimeSpan(0, 0, 0, 0, (int)(600 / (float)e.NewValue));
+        }
+
 
 
         private void SubscribeToEvents()
@@ -76,7 +102,7 @@ namespace TetrisWPF
 
         private void Step(object sender, EventArgs eventArgs)
         {
-            _viewModel.Step();
+            //_viewModel.Step();
         }
 
         #endregion
@@ -92,6 +118,7 @@ namespace TetrisWPF
             {
                 case Key.Down:
                     dir = Direction.Down;
+
                     break;
                 case Key.Left:
                     dir = Direction.Left;
@@ -147,8 +174,7 @@ namespace TetrisWPF
         }
 
         private void StartGame_OnClick(object sender, RoutedEventArgs e)
-        {
-            _viewModel.Start();          
+        {                    
             SetMenuItemStatus(true);
             RectPause.Visibility = Visibility.Hidden;
             _timer.Start();
@@ -215,5 +241,18 @@ namespace TetrisWPF
            
         private readonly global::ViewModel.ViewModel _viewModel;
         private readonly DispatcherTimer _timer;
+
+        private void OpenGame_OnClick(object sender, RoutedEventArgs e)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void SaveGame_OnClick(object sender, RoutedEventArgs e)
+        {
+            throw new NotImplementedException();
+        }
     }
+
+
+    
 }

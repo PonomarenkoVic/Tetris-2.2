@@ -34,6 +34,8 @@
             <MenuItem Header="Game" IsEnabled="True" Name="MenuGames">
                 <MenuItem Header="Start game" x:Name="StartGame" Click="StartGame_OnClick"/>
                 <MenuItem Header="Stop game"  x:Name="StopGame" Click="StopGame_Click" IsEnabled="False"/>
+                <MenuItem Header="Open game"  x:Name="OpenGame" Click="OpenGame_OnClick"/>
+                <MenuItem Header="Save game"  x:Name="SaveGame" Click="SaveGame_OnClick"/>
                 <Separator />
                 <MenuItem IsChecked="False"  x:Name="PauseGame" Header="Pause" Click="PauseGame_Click" IsEnabled="False"/>
             </MenuItem>

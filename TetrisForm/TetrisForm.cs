@@ -12,6 +12,7 @@ using Color = System.Drawing.Color;
 using KeyEventArgs = System.Windows.Forms.KeyEventArgs;
 using TetrisInterfaces;
 using TetrisInterfaces.Enum;
+using TetrisLogic.Classes;
 using TetrisLogic.Figures;
 using LinearGradientBrush = System.Drawing.Drawing2D.LinearGradientBrush;
 
@@ -150,7 +151,7 @@ namespace TetrisForm
 
         private void StripMenuExitItem_Click(object sender, EventArgs e)
         {
-            if (ActiveForm != null) ActiveForm.Close();
+            ActiveForm?.Close();
         }
 
         private void StripMenuStopItem_Click(object sender, EventArgs e)

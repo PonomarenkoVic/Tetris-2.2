@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TetrisInterfaces;
+using TetrisLogic.Classes;
 using TetrisLogic.Interfaces;
 
 namespace TetrisLogic.Figures

@@ -1,18 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using System.Threading.Tasks;
 using TetrisInterfaces;
 using TetrisInterfaces.Enum;
-using static System.Delegate;
+using TetrisLogic.Figures;
 
-namespace TetrisLogic.Figures
+namespace TetrisLogic.Classes
 {
-    public static class FigureLogic
+    public static class Logic
     {
         public static void DelTopFreeLinesAndCenter(int[,] body)
         {
@@ -213,6 +208,11 @@ namespace TetrisLogic.Figures
                 }
             }
             return points;
+        }
+
+        public static bool SaveGame(BoardPoint[,] field, int[,] curFigBody, int[,] nextFigBody, int level, int burnedLines, int score)
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -12,6 +12,7 @@ using TetrisLogic.Figures;
 using System.Timers;
 using Timer = System.Timers.Timer;
 using System.Windows.Forms;
+using TetrisLogic.Classes;
 
 namespace TetrisConsole
 {

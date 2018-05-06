@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using TetrisInterfaces;
 using TetrisInterfaces.Enum;
+using TetrisLogic.Classes;
 
 namespace TetrisLogic.Figures
 {
@@ -21,13 +22,7 @@ namespace TetrisLogic.Figures
 
         public TColor Color { get; }
 
-        public int[,] Body
-        {
-            get
-            {
-                return (int[,])_body.Clone();
-            }
-        }
+        public int[,] Body => (int[,])_body.Clone();
 
         protected int CorrectionTurn
         {
@@ -51,7 +46,7 @@ namespace TetrisLogic.Figures
             bool result = false;
 
             // correcting delta
-            FigureLogic.GetDeltaByDirection(direction, out int dx, out int dy);
+            Logic.GetDeltaByDirection(direction, out int dx, out int dy);
 
             if (CheckPermissionToMove(direction))
             {
@@ -69,7 +64,7 @@ namespace TetrisLogic.Figures
         protected bool TurnFigure()
         {
             bool result = true;
-            int[,] turnedFigure = FigureLogic.GetCoordTurnedFigure(_body, Board.Field, CorrectionTurn);
+            int[,] turnedFigure = Logic.GetCoordTurnedFigure(_body, Board.Field, CorrectionTurn);
             if (turnedFigure != null)
             {
                 _body = (int[,])turnedFigure.Clone();
@@ -83,7 +78,7 @@ namespace TetrisLogic.Figures
 
         public void DeleteTopFreeLineAndCenter()
         {
-            FigureLogic.DelTopFreeLinesAndCenter(_body);
+            Logic.DelTopFreeLinesAndCenter(_body);
         }
        
         protected virtual bool CheckPermissionToMove(Direction dir)
@@ -91,8 +86,8 @@ namespace TetrisLogic.Figures
             bool result = true;
 
 
-            List<Point> points = FigureLogic.GetBoundaryFigurePoints(_body, dir);
-            FigureLogic.GetDeltaByDirection(dir, out int dx, out int dy);
+            List<Point> points = Logic.GetBoundaryFigurePoints(_body, dir);
+            Logic.GetDeltaByDirection(dir, out int dx, out int dy);
             foreach (var point in points)
             {
                 

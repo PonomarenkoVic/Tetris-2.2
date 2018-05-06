@@ -41,8 +41,9 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Classes\Connection.cs" />
     <Compile Include="Figures\Figure.cs" />
-    <Compile Include="Classes\FigureLogic.cs" />
+    <Compile Include="Classes\Logic.cs" />
     <Compile Include="Classes\GameBoard.cs" />
     <Compile Include="Classes\Initializer.cs" />
     <Compile Include="Figures\LeftG.cs" />
