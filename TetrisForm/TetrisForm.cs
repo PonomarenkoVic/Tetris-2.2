@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Data;
+using System.Data.SqlClient;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
@@ -23,10 +25,7 @@ namespace TetrisForm
        
         public TetrisForm()
         {
-            InitializeComponent();
-            _timer = new DispatcherTimer();           
-            _gameBoard = new GameBoard(10, 20);
-            SubscribeToEvents();
+            InitializeComponent();          
         }
 
 
@@ -47,8 +46,7 @@ namespace TetrisForm
         {
             StripMenuStopItem.Enabled = false;
             StripMenuPauseItem.Enabled = false;
-            _graphicGameBoard = GBoard.CreateGraphics();
-            _graphicNextFigure = NFigureBoard.CreateGraphics();
+            StripMenuSaveGameItem.Enabled = false;
         }
 
 
@@ -128,6 +126,7 @@ namespace TetrisForm
 
         private void StripMenuStartItem_Click(object sender, EventArgs e)
         {
+            InitializeGame();
             MessageLabel.Visible = false;           
             _gameBoard.Start();
             SetMenuStatus(true);
@@ -141,9 +140,14 @@ namespace TetrisForm
                 _timer.Stop();
                 MessageLabel.Text = "     Пауза";
                 MessageLabel.Visible = true;
+                StripMenuSaveOptions.Enabled = false;
+                StripMenuOpenGameItem.Enabled = true;
+                StripMenuSaveGameItem.Enabled = true;
             }
             else
             {
+                StripMenuOpenGameItem.Enabled = false;
+                StripMenuSaveGameItem.Enabled = false;
                 MessageLabel.Visible = false;
                 _timer.Start();
             }            
@@ -161,14 +165,7 @@ namespace TetrisForm
             SetMenuStatus(false);
         }
 
-        private void SetMenuStatus(bool status)
-        {
-            StripMenuStartItem.Enabled = !status;
-            StripMenuExitItem.Enabled = !status;
-            StripMenuInformationItem.Enabled = !status;
-            StripMenuPauseItem.Enabled = status;
-            StripMenuStopItem.Enabled = status;
-        }
+       
 
         private void StripMenuInformationItem_Click(object sender, EventArgs e)
         {
@@ -177,6 +174,53 @@ namespace TetrisForm
 
 
 
+        private void MenuSaveOptionsItem_Click(object sender, EventArgs e)
+        {
+            SaveOptionsForm form = new SaveOptionsForm();
+            form.ConnBuiltEvent += (object obj, ConnEventArg args) => _connString = args.ConnString;
+            form.ShowDialog();
+
+        }
+
+        private void StripMenuSaveGameItem_Click(object sender, EventArgs e)
+        {
+            _gameBoard.Save();
+        }
+
+        private void StripMenuOpenGameItem_Click(object sender, EventArgs e)
+        {
+            if (_gameBoard == null)
+            {
+                InitializeGame();
+            }
+            DataTable saveTable = _gameBoard.GetSavePoints();
+            if (saveTable != null)
+            {
+
+                OpenGameForm form = new OpenGameForm(saveTable);
+                form.PointChose = (obj, args) => _gameBoard.Open(args.Id, args.Level, args.BurnedLine, args.Score, args.IdField);
+                form.ShowDialog();
+                StripMenuStartItem.Enabled = true;
+                StripMenuPauseItem.Enabled = false;
+            }
+            else
+            {
+                MessageBox.Show("Ошибка чтения сохраненных данных");
+            }
+
+
+        }
+
+        private void SetMenuStatus(bool status)
+        {
+            StripMenuStartItem.Enabled = !status;
+            StripMenuExitItem.Enabled = !status;
+            StripMenuInformationItem.Enabled = !status;
+            StripMenuPauseItem.Enabled = status;
+            StripMenuStopItem.Enabled = status;
+            StripMenuSaveOptions.Enabled = !status;
+
+        }
         #endregion
 
 
@@ -234,10 +278,37 @@ namespace TetrisForm
         }
 
 
+        private void InitializeGame()
+        {
+            if (_timer == null)
+            {
+                _timer = new DispatcherTimer();
+            }
+            if (_connString == null)
+            {
+                MenuSaveOptionsItem_Click(null, null);
+            }
+
+            InitializeGameBoard();
+           
+        }
+
+        private void InitializeGameBoard()
+        {
+            if (_gameBoard == null)
+            {
+                _gameBoard = new TetrisGameBoard(10, 20, _connString);
+                SubscribeToEvents();
+                _graphicGameBoard = GBoard.CreateGraphics();
+                _graphicNextFigure = NFigureBoard.CreateGraphics();
+            }
+        }
+
+
         Graphics _graphicGameBoard;
         Graphics _graphicNextFigure;
-        private readonly GameBoard _gameBoard;
-        private readonly DispatcherTimer _timer;
-
+        private ITetrisLogic _gameBoard;
+        private DispatcherTimer _timer;
+        private SqlConnectionStringBuilder _connString;
     }
 }

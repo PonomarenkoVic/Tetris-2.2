@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -22,7 +23,15 @@ namespace TetrisConsole
         static void Main(string[] args)
         {
 
-            _board = new GameBoard(10,20);
+            SqlConnectionStringBuilder connString = new SqlConnectionStringBuilder()
+            {
+                DataSource = "5.248.50.32,2501",
+                InitialCatalog = "TetrisBase",
+                UserID = "user2",
+                Password = "ctvtqrf55556",
+                Pooling = true
+            };
+            _board = new TetrisGameBoard(10,20, connString);
             _board.GameOverEvent += GameOver;
             _board.SoundEvent += PlaySound;
             _board.UpdateEvent += Update;
@@ -142,6 +151,6 @@ namespace TetrisConsole
         }
 
         private static readonly Timer Timer = new Timer();
-        private static GameBoard _board;
+        private static TetrisGameBoard _board;
     }
 }

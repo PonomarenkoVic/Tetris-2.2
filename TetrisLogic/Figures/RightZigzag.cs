@@ -11,7 +11,7 @@ namespace TetrisLogic.Figures
 {
     internal sealed class RightZigzag : Figure, IRotatable
     {
-        public RightZigzag(TColor color, int[,] body, GameBoard board) : base(color, body, board)
+        public RightZigzag(TColor color, int[,] body, TetrisGameBoard board) : base(color, body, board)
         {
         }
 
@@ -22,6 +22,11 @@ namespace TetrisLogic.Figures
         public bool Turn()
         {
             return base.TurnFigure();
+        }
+
+        public override FiguresTypes GetFigureType()
+        {
+            return FiguresTypes.RightZigzag;
         }
     }
 }

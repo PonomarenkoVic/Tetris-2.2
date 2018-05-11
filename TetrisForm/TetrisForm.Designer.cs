@@ -34,6 +34,7 @@
             this.StripMenuStartItem = new System.Windows.Forms.ToolStripMenuItem();
             this.StripMenuStopItem = new System.Windows.Forms.ToolStripMenuItem();
             this.StripMenuPauseItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.StripMenuSaveOptions = new System.Windows.Forms.ToolStripMenuItem();
             this.StripMenuExitItem = new System.Windows.Forms.ToolStripMenuItem();
             this.StripMenuInformationItem = new System.Windows.Forms.ToolStripMenuItem();
             this.NFigureBoard = new System.Windows.Forms.PictureBox();
@@ -44,6 +45,8 @@
             this.Level = new System.Windows.Forms.Label();
             this.LevelText = new System.Windows.Forms.Label();
             this.MessageLabel = new System.Windows.Forms.Label();
+            this.StripMenuSaveGameItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.StripMenuOpenGameItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.GBoard)).BeginInit();
             this.MainMenu.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.NFigureBoard)).BeginInit();
@@ -81,6 +84,9 @@
             this.StripMenuStartItem,
             this.StripMenuStopItem,
             this.StripMenuPauseItem,
+            this.StripMenuSaveOptions,
+            this.StripMenuOpenGameItem,
+            this.StripMenuSaveGameItem,
             this.StripMenuExitItem});
             this.StripMenuItem.Name = "StripMenuItem";
             this.StripMenuItem.Size = new System.Drawing.Size(46, 20);
@@ -90,28 +96,35 @@
             // 
             this.StripMenuStartItem.AccessibleName = "StartButton";
             this.StripMenuStartItem.Name = "StripMenuStartItem";
-            this.StripMenuStartItem.Size = new System.Drawing.Size(108, 22);
+            this.StripMenuStartItem.Size = new System.Drawing.Size(201, 22);
             this.StripMenuStartItem.Text = "Старт";
             this.StripMenuStartItem.Click += new System.EventHandler(this.StripMenuStartItem_Click);
             // 
             // StripMenuStopItem
             // 
             this.StripMenuStopItem.Name = "StripMenuStopItem";
-            this.StripMenuStopItem.Size = new System.Drawing.Size(108, 22);
+            this.StripMenuStopItem.Size = new System.Drawing.Size(201, 22);
             this.StripMenuStopItem.Text = "Стоп";
             this.StripMenuStopItem.Click += new System.EventHandler(this.StripMenuStopItem_Click);
             // 
             // StripMenuPauseItem
             // 
             this.StripMenuPauseItem.Name = "StripMenuPauseItem";
-            this.StripMenuPauseItem.Size = new System.Drawing.Size(108, 22);
+            this.StripMenuPauseItem.Size = new System.Drawing.Size(201, 22);
             this.StripMenuPauseItem.Text = "Пауза";
             this.StripMenuPauseItem.Click += new System.EventHandler(this.StripMenuPauseItem_Click);
+            // 
+            // StripMenuSaveOptions
+            // 
+            this.StripMenuSaveOptions.Name = "StripMenuSaveOptions";
+            this.StripMenuSaveOptions.Size = new System.Drawing.Size(201, 22);
+            this.StripMenuSaveOptions.Text = "Настройки сохранения";
+            this.StripMenuSaveOptions.Click += new System.EventHandler(this.MenuSaveOptionsItem_Click);
             // 
             // StripMenuExitItem
             // 
             this.StripMenuExitItem.Name = "StripMenuExitItem";
-            this.StripMenuExitItem.Size = new System.Drawing.Size(108, 22);
+            this.StripMenuExitItem.Size = new System.Drawing.Size(201, 22);
             this.StripMenuExitItem.Text = "Выход";
             this.StripMenuExitItem.Click += new System.EventHandler(this.StripMenuExitItem_Click);
             // 
@@ -212,6 +225,20 @@
             this.MessageLabel.Text = "Конец игры";
             this.MessageLabel.Visible = false;
             // 
+            // StripMenuSaveGameItem
+            // 
+            this.StripMenuSaveGameItem.Name = "StripMenuSaveGameItem";
+            this.StripMenuSaveGameItem.Size = new System.Drawing.Size(201, 22);
+            this.StripMenuSaveGameItem.Text = "Сохранить игру";
+            this.StripMenuSaveGameItem.Click += new System.EventHandler(this.StripMenuSaveGameItem_Click);
+            // 
+            // StripMenuOpenGameItem
+            // 
+            this.StripMenuOpenGameItem.Name = "StripMenuOpenGameItem";
+            this.StripMenuOpenGameItem.Size = new System.Drawing.Size(201, 22);
+            this.StripMenuOpenGameItem.Text = "Открыть игру";
+            this.StripMenuOpenGameItem.Click += new System.EventHandler(this.StripMenuOpenGameItem_Click);
+            // 
             // TetrisForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -264,6 +291,9 @@
         private System.Windows.Forms.Label LevelText;
         private System.Windows.Forms.ToolStripMenuItem StripMenuStopItem;
         private System.Windows.Forms.Label MessageLabel;
+        private System.Windows.Forms.ToolStripMenuItem StripMenuSaveOptions;
+        private System.Windows.Forms.ToolStripMenuItem StripMenuOpenGameItem;
+        private System.Windows.Forms.ToolStripMenuItem StripMenuSaveGameItem;
     }
 }
 

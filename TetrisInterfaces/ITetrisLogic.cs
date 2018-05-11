@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -20,5 +21,9 @@ namespace TetrisInterfaces
         void Move(Direction dir);      
         void Turn();
         void Step();
+        bool Save();
+        void Open(int idSaveP, int lvl, int burnL, int score, int idField);
+        DataTable GetSavePoints();
+
     }
 }

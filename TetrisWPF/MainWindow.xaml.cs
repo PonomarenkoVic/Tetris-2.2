@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Data;
+using System.Data.SqlClient;
 using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
@@ -19,8 +21,6 @@ namespace TetrisWPF
     /// </summary>
     public partial class MainWindow
     {
-
-
         private float Velosity
         {
             set => _timer.Interval = new TimeSpan(0, 0, 0, 0, (int)(600 / value));
@@ -30,12 +30,15 @@ namespace TetrisWPF
         public MainWindow()
         {
             InitializeComponent();
-            _timer = new DispatcherTimer();
-            _viewModel = new global::ViewModel.ViewModel(_width, _height);
-            DataContext = _viewModel;
-            SubscribeToEvents();
-            //    var binding = new Binding("Velocity") { Mode = BindingMode.OneWay };
-            //    this.SetBinding(Velosity, binding);
+            //this.SetBinding(Velosit, binding);
+        }
+
+        
+
+        public DependencyProperty Velosit
+        {
+            //get => SetValue(DependencyProperty.Register(), _timer.Interval);
+            set => _timer.Interval = new TimeSpan(0, 0, 0, 0, (int)(600 / (float)GetValue(value)));
         }
 
         private const int _width = 10;
@@ -102,7 +105,7 @@ namespace TetrisWPF
 
         private void Step(object sender, EventArgs eventArgs)
         {
-            //_viewModel.Step();
+            _viewModel.Step();
         }
 
         #endregion
@@ -142,15 +145,13 @@ namespace TetrisWPF
             }           
         }
 
-        private void StopGame_Click(object sender, RoutedEventArgs e)
-        {                 
-            GameOver();
-        }
+       
 
         private void PauseGame_Click(object sender, RoutedEventArgs e)
         {         
             if (_timer.IsEnabled == true)
             {
+                SetMenuItemStatus(false);
                 PauseAnimation.Content = "Pause";
                 RectPause.Visibility = Visibility.Visible;
                 if (!GameBoard.Children.Contains(RectPause))
@@ -162,6 +163,7 @@ namespace TetrisWPF
             }
             else
             {
+                SetMenuItemStatus(true);
                 RectPause.Visibility = Visibility.Hidden;
                 _timer.Start();
             }
@@ -174,9 +176,10 @@ namespace TetrisWPF
         }
 
         private void StartGame_OnClick(object sender, RoutedEventArgs e)
-        {                    
+        {                   
             SetMenuItemStatus(true);
             RectPause.Visibility = Visibility.Hidden;
+            InitializeGame();
             _timer.Start();
         }
 
@@ -186,6 +189,10 @@ namespace TetrisWPF
             StartGame.IsEnabled = !status;
             PauseGame.IsEnabled = status;
             Information.IsEnabled = !status;
+            OpenGame.IsEnabled = !status;
+            SaveGame.IsEnabled = !status;
+            SaveOptions.IsEnabled = !status;
+
         }
 
         #endregion
@@ -236,23 +243,75 @@ namespace TetrisWPF
 
         #endregion
 
-       
-
-           
-        private readonly global::ViewModel.ViewModel _viewModel;
-        private readonly DispatcherTimer _timer;
 
         private void OpenGame_OnClick(object sender, RoutedEventArgs e)
         {
-            throw new NotImplementedException();
+
+            if (_viewModel == null)
+            {
+                InitializeGame();
+            }
+            DataTable saveTable = _viewModel.GetSavePoints();
+            if (saveTable != null)
+            {
+
+                OpenGameWindow window = new OpenGameWindow(saveTable);
+                window.Owner = this;
+                window.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+                window.PointChose = (obj, args) => _viewModel.OpenSavePoint(args.Id, args.Level, args.BurnedLine, args.Score, args.IdField);
+                window.ShowDialog();
+                StartGame.IsEnabled = true;
+                PauseGame.IsEnabled = false;
+            }
+            else
+            {
+                MessageBox.Show("Ошибка чтения сохраненных данных");
+            }
+
         }
 
         private void SaveGame_OnClick(object sender, RoutedEventArgs e)
         {
-            throw new NotImplementedException();
+            _viewModel.SaveGame();
         }
-    }
+
+        private void StopGame_OnClick(object sender, RoutedEventArgs e)
+        {
+            GameOver();
+        }
 
 
-    
+        private void SaveOptions_OnClick(object sender, RoutedEventArgs e)
+        {
+            SaveOptionsWindow window = new SaveOptionsWindow();
+            window.Owner = this;
+            window.WindowStartupLocation = WindowStartupLocation.CenterOwner; 
+            window.ConnBuiltEvent += (object obj, ConnEventArg args) => _connString = args.ConnString;
+            window.ShowDialog();
+        }
+
+
+
+        private void InitializeGame()
+        {
+            if (_connString == null)
+            {
+                SaveOptions_OnClick(null, null);
+            }
+
+            if (_viewModel == null)
+            {
+                _viewModel = new global::ViewModel.ViewModel(_width, _height, _connString);
+                _timer = new DispatcherTimer();
+                DataContext = _viewModel;
+                SubscribeToEvents();
+                var binding = new Binding("Velocity") { Mode = BindingMode.OneWay };
+            }
+        }
+
+
+        private  global::ViewModel.ViewModel _viewModel;
+        private  DispatcherTimer _timer;
+        private SqlConnectionStringBuilder _connString;
+    } 
 }

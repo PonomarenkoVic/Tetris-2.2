@@ -40,9 +40,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BoardPoint.cs" />
+    <Compile Include="ConnectionEventArg.cs" />
     <Compile Include="Enum\Direction.cs" />
     <Compile Include="Enum\TSound.cs" />
     <Compile Include="ITetrisLogic.cs" />
+    <Compile Include="SavePointEventArg.cs" />
     <Compile Include="ShowEventArg.cs" />
     <Compile Include="SoundEventArg.cs" />
     <Compile Include="Enum\TColor.cs" />

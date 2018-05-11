@@ -10,7 +10,7 @@ namespace TetrisLogic.Figures
 {
     internal sealed class Square: Figure
     {
-        public Square(TColor color, int[,] body, GameBoard board) : base(color, body, board)
+        public Square(TColor color, int[,] body, TetrisGameBoard board) : base(color, body, board)
         {
         }
 
@@ -19,6 +19,9 @@ namespace TetrisLogic.Figures
             return "Square";
         }
 
-        
+        public override FiguresTypes GetFigureType()
+        {
+            return FiguresTypes.Square;
+        }
     }
 }

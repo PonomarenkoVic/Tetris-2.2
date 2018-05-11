@@ -1,6 +1,8 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Configuration;
+using System.Data;
+using System.Data.SqlClient;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using TetrisInterfaces;
@@ -15,9 +17,10 @@ namespace ViewModel
 
 
 
-        public ViewModel(byte width, byte height)
+        public ViewModel(byte width, byte height, SqlConnectionStringBuilder connS)
         {
-            _model = new GameBoard(width, height);         
+            _connString = connS;
+            _model = new TetrisGameBoard(width, height, _connString );         
             _model.UpdateEvent += Update;
             _model.GameOverEvent += GameOver;
             _model.SoundEvent += Sound;
@@ -27,6 +30,7 @@ namespace ViewModel
             _open = new Command(OnOpen, parameter => true);
             _start = new Command(OnStart, parameter => true);
             _keyDown = new Command(OnKeyDown, parameter => true);
+            
         }
 
         public event ShowT UpdateBoard;
@@ -68,7 +72,11 @@ namespace ViewModel
             set => SetProperty(ref _sound, value, nameof(Sound));
         }
 
-
+        public KeyEventArgs Key
+        {
+            get => _key;
+            set => SetProperty(ref _key, value, nameof(Key));
+        }
 
         public ICommand Save
         {
@@ -110,12 +118,26 @@ namespace ViewModel
 
         private void OnKeyDown(object parameter)
         {
-            throw new NotImplementedException();
+            switch (((string)parameter))
+            {
+                case "Down":
+                    _model.Move(Direction.Down);
+                    break;
+                case "Left":
+                    _model.Move(Direction.Left);
+                    break;
+                case "Right":
+                    _model.Move(Direction.Right);
+                    break;
+                case "Space":
+                    _model.Turn();
+                    break;
+            }
         }
 
         private void OnStart(object parameter)
         {
-            _mo
+            _model.Start();
         }
 
         private void OnOpen(object parameter)
@@ -199,5 +221,22 @@ namespace ViewModel
         private ICommand _keyDown;
         private float _velocity;
         private SoundT _sound;
+        private KeyEventArgs _key;
+        private SqlConnectionStringBuilder _connString;
+
+        public DataTable GetSavePoints()
+        {
+            return _model.GetSavePoints();
+        }
+
+        public void OpenSavePoint(int id, int level, int burnedLine, int score, int idField)
+        {
+           _model.Open(id, level, burnedLine, score, idField );
+        }
+
+        public void SaveGame()
+        {
+            _model.Save();
+        }
     }
 }

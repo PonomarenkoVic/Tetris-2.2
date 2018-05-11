@@ -11,7 +11,7 @@ namespace TetrisLogic.Figures
 {
     internal sealed class Stick : Figure, IRotatable
     {
-        public Stick(TColor color, int[,] body, GameBoard board) : base(color, body, board)
+        public Stick(TColor color, int[,] body, TetrisGameBoard board) : base(color, body, board)
         {
         }
 
@@ -23,6 +23,11 @@ namespace TetrisLogic.Figures
         public bool Turn()
         {
             return base.TurnFigure();
+        }
+
+        public override FiguresTypes GetFigureType()
+        {
+            return FiguresTypes.Stick;
         }
     }
 }

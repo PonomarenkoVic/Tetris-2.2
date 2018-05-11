@@ -1,8 +1,20 @@
 ﻿<Window x:Class="TetrisWPF.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"  
-
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         Title="Тетрис 1.0" Height="603" Width="450" VerticalAlignment="Center" WindowStartupLocation="CenterScreen" KeyDown="Window_KeyDown" MinHeight="600" MinWidth="450" ResizeMode="CanMinimize">
+    <!--<Window.CommandBindings>
+        <CommandBinding Command="Start" Executed="Start" />
+    </Window.CommandBindings>-->
+    
+    <Window.InputBindings>
+        <KeyBinding Key="Down" Command="{Binding KeyDown}" CommandParameter="Down"/>
+        <KeyBinding Key="Left" Command="{Binding KeyDown}" CommandParameter="Left"/>
+        <KeyBinding Key="Right" Command="{Binding KeyDown}" CommandParameter="Right"/>
+        <KeyBinding Key="Space" Command="{Binding KeyDown}" CommandParameter="Space"/>
+    </Window.InputBindings>
+    
+    
 
     <Window.Resources>
 
@@ -14,7 +26,20 @@
         </RadialGradientBrush>
     </Window.Resources>
 
+    <!--<i:Interaction.Triggers>
+        <i:EventTrigger EventName="KeyDown">
+
+            <i:InvokeCommandAction Command="{Binding KeyDown}"   CommandParameter="{Binding ConverterParameter=Key}"/>
+        </i:EventTrigger>
+    </i:Interaction.Triggers>-->
+
+
     <Grid Margin="0,0,3.2,0.4">
+
+
+       
+
+
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
@@ -32,10 +57,11 @@
         <!-- Menu -->
         <Menu Name="Game" Grid.Row="0" Grid.ColumnSpan="3"  VerticalAlignment="Top" HorizontalAlignment="Stretch">
             <MenuItem Header="Game" IsEnabled="True" Name="MenuGames">
-                <MenuItem Header="Start game" x:Name="StartGame" Click="StartGame_OnClick"/>
-                <MenuItem Header="Stop game"  x:Name="StopGame" Click="StopGame_Click" IsEnabled="False"/>
+                <MenuItem Header="Start game" x:Name="StartGame" Click="StartGame_OnClick" Command="{Binding Path=Start}"/>
+                <MenuItem Header="Stop game"  x:Name="StopGame" Click="StopGame_OnClick"  IsEnabled="False"/>
                 <MenuItem Header="Open game"  x:Name="OpenGame" Click="OpenGame_OnClick"/>
-                <MenuItem Header="Save game"  x:Name="SaveGame" Click="SaveGame_OnClick"/>
+                <MenuItem Header="Save game"  x:Name="SaveGame" Click="SaveGame_OnClick" IsEnabled="False"/>
+                <MenuItem Header="Save options"  x:Name="SaveOptions" Click="SaveOptions_OnClick"/>
                 <Separator />
                 <MenuItem IsChecked="False"  x:Name="PauseGame" Header="Pause" Click="PauseGame_Click" IsEnabled="False"/>
             </MenuItem>

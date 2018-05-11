@@ -68,7 +68,7 @@ namespace TetrisLogic.Classes
 
         #endregion
 
-        public static Figure GetFigure(GameBoard board)
+        public static Figure GetFigure(TetrisGameBoard board)
         {
             Figure fig;
             int choseFigure = Rnd.Next(0, NumberOfFigures);

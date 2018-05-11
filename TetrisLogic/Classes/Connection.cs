@@ -5,46 +5,34 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using TetrisInterfaces;
 
 namespace TetrisLogic.Classes
 {
-    internal class Connection
+    abstract class Connection : IDisposable
     {
-        public Connection(SqlConnectionStringBuilder conn)
+        protected Connection(SqlConnectionStringBuilder conn)
         {
-            if (conn != null)
+            _conn = new SqlConnection(conn.ConnectionString);
+            _conn.Open();
+        }
+
+        protected virtual SqlCommand GetCommand(string query)
+        {
+            return new SqlCommand
             {
-                _conn = conn;
-            }
+                Connection = _conn,
+                CommandType = CommandType.StoredProcedure,
+                CommandText = query
+            };
         }
 
-        public bool SaveGamePoint(BoardPoint[,] field, int[,] curFigBody, int[,] nextFigBody, int level,
-            int burnedLines, int score)
+
+        public virtual void Dispose()
         {
-            bool result = true;
-
-
-            return result;
+            _conn.Close();
         }
 
 
-        public SqlDataAdapter GetDataAdapter(SqlConnection conn)
-        {
-            SqlCommand cmd = conn.CreateCommand();
-            //cmd.CommandText = "AddSavePoint";  
-            cmd.CommandType = System.Data.CommandType.StoredProcedure;
-            SqlDataAdapter adapter = new SqlDataAdapter(cmd); 
-          
-            adapter.InsertCommand = new SqlCommand("EXEC AddSavePoint null, @level, @burnLine, @score", conn);
-            adapter.InsertCommand.Parameters.Add("@job_desc", SqlDbType.NVarChar, 50, "job_desc");
-            adapter.InsertCommand.Parameters.Add("@min_lvl", SqlDbType.TinyInt, 0, "min_lvl");
-            adapter.InsertCommand.Parameters.Add("@max_lvl", SqlDbType.TinyInt, 0, "max_lvl");
-
-            return adapter;
-        }
-
-        private readonly SqlConnectionStringBuilder _conn;
-
+        protected readonly SqlConnection _conn;
     }
 }

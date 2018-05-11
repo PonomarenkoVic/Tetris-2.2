@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Drawing;
 using TetrisInterfaces;
 using TetrisInterfaces.Enum;
@@ -210,9 +211,14 @@ namespace TetrisLogic.Classes
             return points;
         }
 
-        public static bool SaveGame(BoardPoint[,] field, int[,] curFigBody, int[,] nextFigBody, int level, int burnedLines, int score)
+        public static bool SaveGame(TetrisGameBoard board, SqlConnectionStringBuilder conn)
         {
-            throw new NotImplementedException();
+            bool result;
+            using (var connection = new TetrisConnection(conn))
+            {
+                result = connection.SaveGamePoint(board);
+            }                     
+            return result;
         }
     }
 }

@@ -12,7 +12,7 @@ namespace TetrisLogic.Figures
 {
     public abstract class Figure : ICloneable
     {
-        protected Figure(TColor color, int[,] body, GameBoard board)
+        protected Figure(TColor color, int[,] body, TetrisGameBoard board)
         {
             Color = color;
             _body = (int[,])body.Clone();
@@ -117,7 +117,9 @@ namespace TetrisLogic.Figures
             return fig;
         }
 
-        protected GameBoard Board;
+        public abstract FiguresTypes GetFigureType();
+
+        protected TetrisGameBoard Board;
         private int[,] _body;
         private int _correctionTurn;
     }

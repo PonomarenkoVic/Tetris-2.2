@@ -42,9 +42,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Classes\Connection.cs" />
+    <Compile Include="Classes\GameBoard.cs" />
+    <Compile Include="Classes\TetrisConnection.cs" />
+    <Compile Include="Classes\DataBaseLogic.cs" />
+    <Compile Include="FiguresTypes.cs" />
     <Compile Include="Figures\Figure.cs" />
     <Compile Include="Classes\Logic.cs" />
-    <Compile Include="Classes\GameBoard.cs" />
+    <Compile Include="Classes\TetrisGameBoard.cs" />
     <Compile Include="Classes\Initializer.cs" />
     <Compile Include="Figures\LeftG.cs" />
     <Compile Include="Figures\LeftZigzag.cs" />
