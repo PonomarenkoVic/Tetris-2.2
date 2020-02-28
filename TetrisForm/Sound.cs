@@ -1,4 +1,5 @@
 ﻿
+using System.IO;
 using System.Media;
 using TetrisInterfaces.Enum;
 
@@ -22,6 +23,9 @@ namespace TetrisForm
                     path = "turn.wav";
                     break;
             }
+            if (!File.Exists(path))
+                return;
+
             Player.SoundLocation = path;
             Player.Play();
         }
